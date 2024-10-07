@@ -1,26 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"> <!-- Correct link to the CSS file in static directory -->
-    <title>Raghu_Helpers</title>
-</head>
+{% block title %}Home{% endblock %} <!-- Sets the title for the index page -->
 
-<body>
-    <!-- Navigation Bar -->
-    <nav>
-        <div class="logo">
-            <h1>R<span>E</span>C</h1>
-        </div>
-        <div class="menu-btns">
-            <a href="">Home</a>
-            <a href="">About</a>
-            <a href="">Sign In</a>
-        </div>
-    </nav>
-
+{% block content %}
     <!-- Year Selection -->
     <section class="First Section-one">
         <div class="btns">
@@ -92,6 +74,4 @@
             <a>Four [4-2]</a>
         </div>
     </section>
-</body>
-
-</html>
+{% endblock %}

@@ -16,9 +16,15 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# Home route
 @app.route("/")
 def index():
     return render_template("index.html")
+
+# Sign-in route
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    return render_template("sign.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
