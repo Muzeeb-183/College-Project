@@ -1,0 +1,132 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Roboto+Slab:wght@100..900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --main-color: #ffffff;
+    --primary-color: #000000ea;
+    --design-color1: rgba(224, 193, 15, 0.877);
+    --design-color2: rgb(31, 133, 31);
+    --main-font: "Playfair Display SC", serif;
+    --primary-font: "Roboto Slab", serif;
+}
+
+body {
+    background-color: var(--primary-color);
+}
+
+/* Navigation bar starts */
+nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--main-font);
+    font-weight: bold;
+    padding: 20px;
+}
+
+.logo {
+    margin-left: 5rem;
+    font-size: 2rem;
+    color: var(--main-color);
+}
+
+.logo span {
+    color: var(--design-color1);
+}
+
+.menu-btns {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10rem;
+    cursor: pointer;
+}
+
+.menu-btns a {
+    margin-left: 30px;
+    ;
+    text-decoration: none;
+    color: var(--design-color1);
+    font-size: 1.2rem;
+    /* & :hover {
+        border-bottom: 2px solid var(--main-color);
+    } */
+}
+
+.menu-btns a:hover {
+    border-bottom: 2px solid var(--main-color);
+}
+
+/* nav ends */
+
+/* First section start */
+
+/* First-half starts */
+
+.Section-one {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 2rem;
+    height: 80vh;
+    border: 1px solid white;
+}
+
+.btns {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    margin-bottom: 5rem;
+}
+
+.btns a {
+    margin-top: 60px;
+    text-decoration: none;
+    color: var(--main-color);
+    font-family: var(--primary-font);
+    font-weight: bold;
+    font-size: 1.3rem;
+    border: 2px solid var(--design-color1);
+    padding: 15px;
+
+}
+
+.btns a:hover {
+    background-color: var(--design-color1);
+    color: black;
+}
+
+.content {
+    max-width: 400px;
+    margin-bottom: 1rem;
+}
+
+.content img {
+    height: 450px;
+    width: 300px;
+    border: 1px solid #fff;
+}
+
+/* First-half ends */
+
+/* First another-half */
+
+.Section-two {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
+    margin-top: 3rem;
+    height: 80vh;
+    border: 1px solid white;
+}
