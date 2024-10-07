@@ -51,25 +51,16 @@ nav {
 
 .menu-btns a {
     margin-left: 30px;
-    ;
     text-decoration: none;
     color: var(--design-color1);
     font-size: 1.2rem;
-    /* & :hover {
-        border-bottom: 2px solid var(--main-color);
-    } */
 }
 
 .menu-btns a:hover {
     border-bottom: 2px solid var(--main-color);
 }
 
-/* nav ends */
-
-/* First section start */
-
-/* First-half starts */
-
+/* First section */
 .Section-one {
     display: flex;
     flex-wrap: wrap;
@@ -98,7 +89,6 @@ nav {
     font-size: 1.3rem;
     border: 2px solid var(--design-color1);
     padding: 15px;
-
 }
 
 .btns a:hover {
@@ -117,10 +107,7 @@ nav {
     border: 1px solid #fff;
 }
 
-/* First-half ends */
-
-/* First another-half */
-
+/* Second section */
 .Section-two {
     display: flex;
     flex-wrap: wrap;

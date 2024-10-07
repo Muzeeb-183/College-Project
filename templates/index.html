@@ -4,11 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
-    <title>College</title>
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"> <!-- Correct link to the CSS file in static directory -->
+    <title>Raghu_Helpers</title>
 </head>
 
 <body>
+    <!-- Navigation Bar -->
     <nav>
         <div class="logo">
             <h1>R<span>E</span>C</h1>
@@ -19,6 +20,7 @@
             <a href="">Sign In</a>
         </div>
     </nav>
+
     <!-- Year Selection -->
     <section class="First Section-one">
         <div class="btns">
@@ -34,6 +36,7 @@
             </div>
         </div>
     </section>
+
     <!-- First Year -->
     <section class="First Section-two">
         <div class="content imgs">
@@ -47,6 +50,7 @@
             <a>First [1-2]</a>
         </div>
     </section>
+
     <!-- Second Year -->
     <section class="Second Section-two">
         <div class="content imgs">
@@ -60,6 +64,7 @@
             <a>Second [2-2]</a>
         </div>
     </section>
+
     <!-- Third Year -->
     <section class="Third Section-two">
         <div class="content imgs">
@@ -73,6 +78,7 @@
             <a>Three [3-2]</a>
         </div>
     </section>
+
     <!-- Fourth Year -->
     <section class="Fourth Section-two">
         <div class="content imgs">
