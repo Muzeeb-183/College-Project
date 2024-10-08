@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Roboto+Slab:wght@100..900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --main-color: #ffffff;
+    --primary-color: #000000ea;
+    --design-color1: rgba(224, 193, 15, 0.877);
+    --design-color2: rgb(31, 133, 31);
+    --main-font: "Playfair Display SC", serif;
+    --primary-font: "Roboto Slab", serif;
+}
+
+body {
+    background-color: var(--primary-color);
+    height: 90vh;
+}
+h1{
+    color: var(--main-color);
+    text-align: center;
+    margin-top: 5rem;
+    font-family: var(--main-font);
+    font-size: 3rem;
+}
+span{
+    color: var(--design-color1);
+}
+.container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 6rem;
+}
+form label{
+    color: var(--main-color);
+    font-family: var(--primary-font);
+    font-size: 1.3rem;
+}
+form input{
+    height: 55px;
+    width: 250px;
+    border: 0;
+    outline: 0;
+    padding: 14px;
+    border-radius: 4px;
+}
+.password-container{
+    height: 55px;
+    width: 250px;
+    background-color: var(--main-color);
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+.password-container img{
+    margin-right: 10px;
+}
+form i{
+    font-size: 2rem;
+    color: var(--design-color1);
+}
+
+button{
+    margin-top:3rem;
+    margin-left: 5rem;
+    padding: 10px;
+    font-family: var(--primary-font);
+    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: bold;
+
+}
