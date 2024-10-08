@@ -1,10 +1,12 @@
+<!-- layout.html -->
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"> <!-- Link to general stylesheet -->
+    {% block additional_styles %}{% endblock %} <!-- Placeholder for additional stylesheets -->
     <title>{% block title %}Home{% endblock %}</title> <!-- Title block to be overridden -->
 </head>
 
@@ -15,9 +17,9 @@
             <h1>R<span>E</span>C</h1>
         </div>
         <div class="menu-btns">
-            <a href="/">Home</a>
-            <a href="">About</a>
-            <a href="/signin">Sign In</a>
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="#">About</a>
+            <a href="{{ url_for('signin') }}">Sign In</a>
         </div>
     </nav>
 

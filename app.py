@@ -1,3 +1,4 @@
+# app.py
 from flask import Flask, render_template
 from flask_session import Session
 
@@ -24,7 +25,7 @@ def index():
 # Sign-in route
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
-    return render_template("sign.html")
+    return render_template("signin.html")
 
 if __name__ == "__main__":
     app.run(debug=True)

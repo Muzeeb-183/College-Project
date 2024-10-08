@@ -1,45 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style1.css">
-    <link
-    href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
-    rel="stylesheet"
-/>
-    <title>Sign-In</title>
-</head>
-<body>
-    <h1>Raghu <span>Engineering</span> College</h1>
-    <div class="container">
-        <form action="">
-            <pre><label for="email">Email</label>     <i class="ri-mail-line"></i></pre><br>
-            <input type="email" id="email" placeholder="college mail"> <br><br><br>
-            <pre><label for="password">Password</label>     <i class="ri-lock-line"></i></pre><br>
-            <div class="password-container">
-                <input type="password" id="password" placeholder="password">
-                <img src="eye-open.png" id="eyeicon" alt="">
-            </div>
-            <button>Submit</button>
 
-        </form>
-    </div>
+{% extends "layout.html" %}
 
+{% block title %}Sign-In{% endblock %}
 
-    <script>
-        let eyeicon = document.getElementById("eyeicon");
-        let password = document.getElementById("password");
+{% block additional_styles %}
+<link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet"> <!-- Link to sign-in specific stylesheet -->
+{% endblock %}
 
-        eyeicon.onclick = function(){
-            if( password.type == "password"){
-                password.type = "text";
-            }
-            else{
-                password.type = "password";
-                eyeicon.src = eye-open.png;
-            }
+{% block content %}
+<div class="container">
+    <form action="{{ url_for('signin') }}" method="POST">
+        <pre><label for="email">Email</label>     <i class="ri-mail-line"></i></pre><br>
+        <input type="email" id="email" placeholder="college mail"> <br><br><br>
+        <pre><label for="password">Password</label>     <i class="ri-lock-line"></i></pre><br>
+        <div class="password-container">
+            <input type="password" id="password" placeholder="password">
+            <img src="{{ url_for('static', filename='images/eye-open.png') }}" id="eyeicon" alt="eye icon">
+        </div>
+        <button>Submit</button>
+    </form>
+</div>
+
+<script>
+    let eyeicon = document.getElementById("eyeicon");
+    let password = document.getElementById("password");
+
+    eyeicon.onclick = function(){
+        if( password.type == "password"){
+            password.type = "text";
         }
-    </script>
-</body>
-</html>
+        else{
+            password.type = "password";
+        }
+    }
+</script>
+{% endblock %}
