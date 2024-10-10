@@ -1,0 +1,83 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Roboto+Slab:wght@100..900&display=swap');
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    /* word-spacing: 10px; */
+    letter-spacing: 2px;
+}
+
+:root {
+    --main-color: #ffffff;
+    --primary-color: #000000ea;
+    --design-color1: rgba(224, 193, 15, 0.877);
+    --design-color2: rgb(31, 133, 31);
+    --main-font: "Playfair Display SC", serif;
+    --primary-font: "Roboto Slab", serif;
+}
+
+body {
+    background-color: var(--primary-color);
+}
+
+h1 {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--design-color1);
+
+}
+
+.subjects {
+    height: 400px;
+    margin-top: 5rem;
+    margin-left: 8rem;
+    margin-right: 8rem;
+    padding: 40px;
+    display: grid;
+    grid-template-rows: repeat(3, 145px);
+    grid-template-columns: repeat(5, 175px);
+    grid-gap: 25px;
+    border: 2px solid var(--main-color);
+}
+
+.subjects img {
+    margin-left: 100px;
+    padding: 10px;
+
+}
+
+.subjects a {
+    text-decoration: none;
+    border: 1px solid var(--design-color1);
+    padding: 20px;
+    text-align: center;
+    font-family: var(--primary-font);
+    color: var(--main-color);
+}
+
+.ece-subjects {
+    height: 380px;
+}
+
+.mec-subjects {
+    height: 380px;
+
+}
+
+#ece {
+    margin-top: 6rem;
+}
+
+#mec {
+    margin-top: 10rem;
+}
+
+#footer-img {
+    height: 150px;
+    width: 900px;
+    margin: 2rem 12rem;
+    background-color: var(--design-color2);
+    border: 2px solid var(--main-color);
+}
