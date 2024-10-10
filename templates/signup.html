@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}Sign-Up{% endblock %} <!-- Sets the title for the sign-up page -->
+
+{% block additional_styles %}
+<link href="{{ url_for('static', filename='style1.css') }}" rel="stylesheet"> <!-- Link to the sign-up specific stylesheet -->
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <form action="{{ url_for('signup') }}" method="POST">
+        <!-- Name Field -->
+        <pre><label for="name">Name</label>     <i class="ri-user-line"></i></pre><br>
+        <input type="text" id="name" placeholder="Full Name"><br><br><br>
+        
+        <!-- Email Field -->
+        <pre><label for="email">Email</label>     <i class="ri-mail-line"></i></pre><br>
+        <input type="email" id="email" placeholder="college mail"><br><br><br>
+
+        <!-- Password Field -->
+        <pre><label for="password">Password</label>     <i class="ri-lock-line"></i></pre><br>
+        <div class="password-container">
+            <input type="password" id="password" placeholder="password">
+            <img src="{{ url_for('static', filename='images/eye-open.png') }}" id="eyeicon" alt="eye icon">
+        </div><br><br>
+
+        <!-- Confirm Password Field -->
+        <pre><label for="confirm-password">Confirm Password</label>     <i class="ri-lock-line"></i></pre><br>
+        <div class="password-container">
+            <input type="password" id="confirm-password" placeholder="confirm password">
+            <img src="{{ url_for('static', filename='images/eye-open.png') }}" id="confirm-eyeicon" alt="eye icon">
+        </div>
+        
+        <!-- Submit Button -->
+        <button>Sign Up</button>
+    </form>
+</div>
+
+<script>
+    // Toggle visibility for password fields
+    let eyeicon = document.getElementById("eyeicon");
+    let password = document.getElementById("password");
+    let confirmEyeicon = document.getElementById("confirm-eyeicon");
+    let confirmPassword = document.getElementById("confirm-password");
+
+    eyeicon.onclick = function() {
+        if (password.type === "password") {
+            password.type = "text";
+        } else {
+            password.type = "password";
+        }
+    }
+
+    confirmEyeicon.onclick = function() {
+        if (confirmPassword.type === "password") {
+            confirmPassword.type = "text";
+        } else {
+            confirmPassword.type = "password";
+        }
+    }
+</script>
+{% endblock %}

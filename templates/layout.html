@@ -1,7 +1,6 @@
 <!-- layout.html -->
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +8,6 @@
     {% block additional_styles %}{% endblock %} <!-- Placeholder for additional stylesheets -->
     <title>{% block title %}Home{% endblock %}</title> <!-- Title block to be overridden -->
 </head>
-
 <body>
     <!-- Navigation Bar -->
     <nav>
@@ -20,6 +18,7 @@
             <a href="{{ url_for('index') }}">Home</a>
             <a href="#">About</a>
             <a href="{{ url_for('signin') }}">Sign In</a>
+            <a href="{{ url_for('signup') }}">Sign Up</a> <!-- New link to sign-up page -->
         </div>
     </nav>
 

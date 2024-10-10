@@ -26,6 +26,11 @@ def index():
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
     return render_template("signin.html")
+# Sign-up route
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    return render_template("signup.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

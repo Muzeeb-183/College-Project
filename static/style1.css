@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Roboto+Slab:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
 
+/* Reset default margins and padding */
 * {
     padding: 0;
     margin: 0;
@@ -16,32 +17,74 @@
     --primary-font: "Roboto Slab", serif;
 }
 
+/* General body styling */
 body {
     background-color: var(--primary-color);
-    height: 90vh;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
-h1{
+
+/* Reset any scaling effect on the logo */
+.logo h1 {
+    font-size: 3rem; /* Consistent size for all pages */
     color: var(--main-color);
-    text-align: center;
-    margin-top: 5rem;
     font-family: var(--main-font);
-    font-size: 3rem;
+    display: inline;
+    margin: 0; /* Reset margin */
+    padding: 0; /* Reset padding */
+    line-height: 1; /* Ensure proper alignment */
+    transition: font-size 0.2s ease-in-out; /* Smooth transition on size changes */
 }
-span{
+
+.logo span {
     color: var(--design-color1);
 }
-.container{
+
+/* Navigation bar style */
+nav {
+    display: flex;
+    align-items: center; /* Vertically center the logo and menu items */
+    justify-content: space-between;
+    padding: 20px;
+}
+
+/* Menu buttons */
+.menu-btns {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* margin-top: 2rem; */
+    margin-right: 10rem;
 }
-form label{
+
+.menu-btns a {
+    margin-left: 30px;
+    text-decoration: none;
+    color: var(--design-color1);
+    font-size: 1.2rem;
+}
+
+.menu-btns a:hover {
+    border-bottom: 2px solid var(--main-color);
+}
+
+/* Form container styling */
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: calc(100vh - 100px); /* Adjust height based on navbar */
+}
+
+/* Form label and input styling */
+form label {
     color: var(--main-color);
     font-family: var(--primary-font);
     font-size: 1.3rem;
 }
-form input{
+
+form input {
     height: 55px;
     width: 250px;
     border: 0;
@@ -49,7 +92,9 @@ form input{
     padding: 14px;
     border-radius: 4px;
 }
-.password-container{
+
+/* Password field styling */
+.password-container {
     height: 55px;
     width: 250px;
     background-color: var(--main-color);
@@ -57,23 +102,24 @@ form input{
     display: flex;
     justify-content: center;
     align-items: center;
-
 }
-.password-container img{
+
+.password-container img {
     margin-right: 10px;
 }
-form i{
+
+form i {
     font-size: 2rem;
     color: var(--design-color1);
 }
 
-button{
-    margin-top:3rem;
+/* Button styling */
+button {
+    margin-top: 3rem;
     margin-left: 5rem;
     padding: 10px;
     font-family: var(--primary-font);
     color: var(--primary-color);
     font-size: 1rem;
     font-weight: bold;
-
 }
