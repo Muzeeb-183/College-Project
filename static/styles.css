@@ -117,3 +117,15 @@ nav {
     height: 80vh;
     border: 1px solid white;
 }
+/* Remove underline and customize the logo link */
+.logo a {
+    text-decoration: none; /* Remove underline */
+    color: inherit; /* Inherit the text color from the parent */
+}
+
+/* Optional: You can also style the logo hover if needed */
+.logo a:hover {
+    color: #000; /* Change this to your desired hover color */
+}
+
+

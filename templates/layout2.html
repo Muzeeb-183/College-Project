@@ -9,6 +9,20 @@
     <title>{% block title %}Home{% endblock %}</title> <!-- Title block to be overridden -->
 </head>
 <body>
+    <nav>
+        <div class="logo">
+            <a href="{{ url_for('index') }}">
+                <h1>R<span>E</span>C</h1>
+            </a>
+        </div>
+        
+        <div class="menu-btns">
+            <a href="{{ url_for('index') }}">Home</a>
+            <a href="#">About</a>
+            
+            
+        </div>
+    </nav>
   
     <!-- Main content section -->
     <div class="container">
