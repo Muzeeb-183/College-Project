@@ -1,61 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout2.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="subjects.css">
-    <title>Two-one</title>
-</head>
+{% block title %}Second Year (2-1) (AR-20){% endblock %}
 
-<body>
+{% block additional_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='subjects.css') }}"> <!-- Link to the specific stylesheet -->
+{% endblock %}
+
+{% block content %}
     <h1>Second Year (2-1) (AR-20)</h1>
     <h1 id="cse"><u>CSE and CSE Specializations</u></h1>
-    <section class="cse-common-subjects subjects">
-        <!-- core cse -->
 
+    <section class="cse-common-subjects subjects">
+        <!-- CSE Subjects -->
         <a href="" class="s">Discrete Structures - (DS)</a>
         <a href="" class="s">Software Engineering - (SE)</a>
         <a href="" class="s">Computer Organization - (CO)</a>
-        <a href="" class="s">Theorey Of Computation - (TOC)</a>
+        <a href="" class="s">Theory Of Computation - (TOC)</a>
         <a href="" class="s">Object Oriented Programming - (OOP through C++)</a>
         <a href="" class="s">Python Programming</a>
         <a href="" class="s">Operating System - (OS)</a>
         <a href="" class="s">Electronic Devices</a>
 
-
         <img src="" alt="Image will be placed" height="200px" width="450px">
     </section>
+
     <h1 id="ece"><u>Electronics and Communication Engineering (ECE)</u></h1>
     <h1>&</h1>
     <h1><u>Electrical and Electronics Engineering (EEE)</u></h1>
 
     <section class="ece-subjects subjects">
+        <!-- ECE & EEE Subjects -->
         <a href="" class="s">Numerical & Transform Techniques</a>
         <a href="" class="s">Electronic Devices and Circuits</a>
         <a href="" class="s">Digital Electronics</a>
         <a href="" class="s">Network Analysis</a>
         <a href="" class="s">Electromagnetic Waves and Transmission Lines</a>
         <a href="" class="s">Electrical Circuit Analysis</a>
-        <a href="" class="s">DC Machines and Trasformers</a>
-        <a href="" class="s">Electromagnetic Field Theorey</a>
-        <a href="" class="s">Ananlog Electronics</a>
+        <a href="" class="s">DC Machines and Transformers</a>
+        <a href="" class="s">Electromagnetic Field Theory</a>
+        <a href="" class="s">Analog Electronics</a>
     </section>
 
     <h1 id="mec"><u>Mechanical Engineering (MEC)</u></h1>
     <h1>&</h1>
     <h1><u>Civil Engineering (CIV)</u></h1>
+
     <section class="mec-subjects subjects">
+        <!-- MEC & CIV Subjects -->
         <a href="" class="s">Numerical Techniques & Partial Differential Equations</a>
         <a href="" class="s">Metallurgy & Material Science</a>
         <a href="" class="s">Mechanics of Solids</a>
         <a href="" class="s">Production Technology</a>
-        <a href="" class="s">Managerial Economis and Financial Accountancy - (MEFA)</a>
+        <a href="" class="s">Managerial Economics and Financial Accountancy - (MEFA)</a>
         <a href="" class="s">Strength of Materials</a>
-        <a href="" class="s">Bulding Materials & Concrete Technology</a>
+        <a href="" class="s">Building Materials & Concrete Technology</a>
         <a href="" class="s">RS & GIS Applications</a>
         <a href="" class="s">Fluid Mechanics</a>
     </section>
+
     <img src="" alt="" id="footer-img">
-</body>
-</html>
+{% endblock %}

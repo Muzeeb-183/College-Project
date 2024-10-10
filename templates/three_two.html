@@ -1,24 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout2.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="subjects.css">
-    <title>Three-two</title>
+{% block title %}Third Year (3-2) (AR-20){% endblock %}
+
+{% block additional_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='subjects.css') }}">
     <style>
-        .cse-common-subjects{
+        .cse-common-subjects {
             height: 550px;
         }
     </style>
-</head>
+{% endblock %}
 
-<body>
+{% block content %}
     <h1>Third Year (3-2) (AR-20)</h1>
+
     <h1 id="cse"><u>CSE and CSE Specializations</u></h1>
     <section class="cse-common-subjects subjects">
-        <!-- core cse -->
-
+        <!-- CSE Subjects -->
         <a href="" class="s">Data Warehousing and Mining</a>
         <a href="" class="s">Mobile Computing</a>
         <a href="" class="s">Web Technologies</a>
@@ -27,7 +25,7 @@
         <a href="" class="s">Computer Networks - (CN)</a>
         <a href="" class="s">Data Analytics</a>
         <a href="" class="s">Data Wrangling</a>
-        <a href="" class="s">	Cryptography and Network Security</a>
+        <a href="" class="s">Cryptography and Network Security</a>
         <a href="" class="s">Digital Forensics</a>
         <a href="" class="s">Malware Analysis</a>
         <a href="" class="s">IoT Architecture and Protocols</a>
@@ -35,11 +33,12 @@
         <a href="" class="s">Embedded Technology for IoT</a>
         <img src="" alt="Image will be placed" height="200px" width="450px">
     </section>
+
     <h1 id="ece"><u>Electronics and Communication Engineering (ECE)</u></h1>
     <h1>&</h1>
     <h1><u>Electrical and Electronics Engineering (EEE)</u></h1>
-
     <section class="ece-subjects subjects">
+        <!-- ECE & EEE Subjects -->
         <a href="" class="s">Micro Processors & Micro Controllers</a>
         <a href="" class="s">Digital Signal Processing</a>
         <a href="" class="s">VLSI Design</a>
@@ -52,14 +51,14 @@
     <h1>&</h1>
     <h1><u>Civil Engineering (CIV)</u></h1>
     <section class="mec-subjects subjects">
+        <!-- MEC & CIV Subjects -->
         <a href="" class="s">Dynamics of Machinery</a>
         <a href="" class="s">Metrology & ICS</a>
-        <a href="" class="s">Heat transfer</a>
+        <a href="" class="s">Heat Transfer</a>
         <a href="" class="s">Managerial Economics and Financial Accountancy - (MEFA)</a>
-        <a href="" class="s">Soil Mechanics &; Foundation Engineering</a>
+        <a href="" class="s">Soil Mechanics & Foundation Engineering</a>
         <a href="" class="s">Design & Drawing Of Steel Structures</a>
     </section>
-    <img src="" alt="" id="footer-img">
-</body>
 
-</html>
+    <img src="" alt="" id="footer-img">
+{% endblock %}

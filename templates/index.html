@@ -10,7 +10,6 @@
             <a href="#two-one">Second Year</a>
             <a href="#three-one">Third Year</a>
             <a href="#four-one">Fourth Year</a>
-            <a href="{{ url_for('signup') }}" style="color: var(--design-color1); border: 2px solid var(--design-color1); padding: 10px; margin-top: 20px;">Sign Up Now</a>
         </div>
 
         <div class="content imgs">
@@ -29,8 +28,8 @@
         </div>
 
         <div class="btns">
-            <a id="one-one" href="one_one">First [1-1]</a>
-            <a href="one-two.html">First [1-2]</a>
+            <a href="{{ url_for('one_one') }}">First [1-1]</a>
+            <a href="{{ url_for('one_two') }}">First [1-2]</a>
         </div>
     </section>
 
@@ -43,8 +42,8 @@
         </div>
 
         <div class="btns">
-            <a id="two-one" href="two-one.html">Second [2-1]</a>
-            <a href="two-two.html">Second [2-2]</a>
+            <a href="{{ url_for('two_one') }}">Second [2-1]</a>
+            <a href="{{ url_for('two_two') }}">Second [2-2]</a>
         </div>
     </section>
 
@@ -57,8 +56,9 @@
         </div>
 
         <div class="btns">
-            <a id="three-one" href="three-one.html">Three [3-1]</a>
-            <a href="three-two.html">Three [3-2]</a>
+            <a href="{{ url_for('three_one') }}">Three [3-1]</a>
+            <a href="{{ url_for('three_two') }}">Three [3-2]</a>
+            
         </div>
     </section>
 
