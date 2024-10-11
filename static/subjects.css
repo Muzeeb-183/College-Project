@@ -37,7 +37,7 @@ h1 {
     padding: 40px;
     display: grid;
     grid-template-rows: repeat(3, 145px);
-    grid-template-columns: repeat(5, 175px);
+    grid-template-columns: repeat(5, 180px);
     grid-gap: 25px;
     border: 2px solid var(--main-color);
 }
