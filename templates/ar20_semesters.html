@@ -1,3 +1,6 @@
+{% extends 'layout2.html' %}
+
+{% block content %}
   <!-- First Year -->
   <section class="First Section-two">
     <div class="content imgs">
@@ -10,10 +13,10 @@
         <a id="one-one" href="{{ url_for('one_one') }}">First [1-1]</a>
         <a href="{{ url_for('one_two') }}">First [1-2]</a>
     </div>
-</section>
+  </section>
 
-<!-- Second Year -->
-<section class="Second Section-two">
+  <!-- Second Year -->
+  <section class="Second Section-two">
     <div class="content imgs">
         <div class="content img">
             <img src="" alt="">
@@ -24,10 +27,10 @@
         <a id="two-one" href="{{ url_for('two_one') }}">Second [2-1]</a>
         <a href="{{ url_for('two_two') }}">Second [2-2]</a>
     </div>
-</section>
+  </section>
 
-<!-- Third Year -->
-<section class="Third Section-two">
+  <!-- Third Year -->
+  <section class="Third Section-two">
     <div class="content imgs">
         <div class="content img">
             <img src="" alt="">
@@ -37,12 +40,11 @@
     <div class="btns">
         <a id="three-one" href="{{ url_for('three_one') }}">Three [3-1]</a>
         <a href="{{ url_for('three_two') }}">Three [3-2]</a>
-        
     </div>
-</section>
+  </section>
 
-<!-- Fourth Year -->
-<section class="Fourth Section-two">
+  <!-- Fourth Year -->
+  <section class="Fourth Section-two">
     <div class="content imgs">
         <div class="content img">
             <img src="" alt="">
@@ -53,4 +55,5 @@
         <a id="four-one">Four [4-1]</a>
         <a>Four [4-2]</a>
     </div>
-</section>
+  </section>
+{% endblock %}

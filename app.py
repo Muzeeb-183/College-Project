@@ -40,42 +40,6 @@ def signup():
 
 
 
-@app.route("/one_one", methods=["GET", "POST"])
-def one_one():
-    return render_template("one_one.html")
-
-
-
-@app.route("/one_two", methods=["GET", "POST"])
-def one_two():
-    return render_template("one_two.html")
-
-
-
-@app.route("/two_one", methods=["GET", "POST"])
-def two_one():
-    return render_template("two_one.html")
-
-
-
-@app.route("/two_two", methods=["GET", "POST"])
-def two_two():
-    return render_template("two_two.html")
-
-
-
-@app.route("/three_one", methods=["GET", "POST"])
-def three_one():
-    return render_template("three_one.html")
-
-
-
-@app.route("/three_two", methods=["GET", "POST"])
-def three_two():
-    return render_template("three_two.html")
-
-
-
 
 @app.route("/about", methods=["GET", "POST"])
 def about():
@@ -83,6 +47,87 @@ def about():
 
 
 
+
+
+
+@app.route("/regulations", methods=["GET", "POST"])
+def regulations():
+    return render_template("regulations.html")
+
+
+
+@app.route("/AR_20_semesters", methods=["GET", "POST"])
+def AR_20_semesters():
+    return render_template("ar20_semesters.html")
+
+
+
+
+@app.route("/one_one", methods=["GET", "POST"])
+def one_one():
+    return render_template("ar20_one_one.html")
+
+
+@app.route("/one_two", methods=["GET", "POST"])
+def one_two():
+    return render_template("ar20_one_two.html")
+
+
+@app.route("/two_one", methods=["GET", "POST"])
+def two_one():
+    return render_template("ar20_two_one.html")
+
+
+@app.route("/two_two", methods=["GET", "POST"])
+def two_two():
+    return render_template("ar20_two_two.html")
+
+
+@app.route("/three_one", methods=["GET", "POST"])
+def three_one():
+    return render_template("ar20_three_one.html")
+
+
+@app.route("/three_two", methods=["GET", "POST"])
+def three_two():
+    return render_template("ar20_three_two.html")
+
+#------------------------------------------------------#
+
+@app.route("/AR_23_semesters", methods=["GET", "POST"])
+def AR_23_semesters():
+    return render_template("ar23_semesters.html")
+
+
+@app.route("/ar_23_one_one", methods=["GET", "POST"])
+def ar_23_one_one():
+    return render_template("ar23_one_one.html")
+
+
+@app.route("/ar_23_one_two", methods=["GET", "POST"])
+def ar_23_one_two():
+    return render_template("ar23_one_two.html")
+
+
+@app.route("/ar_23_two_one", methods=["GET", "POST"])
+def ar_23_two_one():
+    return render_template("ar23_two_one.html")
+
+
+@app.route("/ar_23_two_two", methods=["GET", "POST"])
+def ar_23_two_two():
+    return render_template("ar23_two_two.html")
+
+
+@app.route("/ar_23_three_one", methods=["GET", "POST"])
+def ar_23_three_one():
+    return render_template("ar23_three_one.html")
+
+
+@app.route("/ar_23_three_two", methods=["GET", "POST"])
+def ar_23_three_two():
+    return render_template("ar23_three_two.html")
+   
 
 
 if __name__ == "__main__":
