@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout2.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="subjects.css">
-    <title>Two-one</title>
-</head>
+{% block title %}First Year (1-1) (AR-20){% endblock %}
 
-<body>
+{% block additional_styles %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='subjects.css') }}"> <!-- Link to the specific stylesheet -->
+    
+{% endblock %}
+
+{% block content %}
     <h1>Second Year (2-1) (AR-23)</h1>
     <h1 id="cse"><u>CSE and CSE Specializations</u></h1>
     <section class="cse-common-subjects subjects">
@@ -48,5 +47,4 @@
         <a href="" class="s">Thermodynamics</a>
     </section>
     <img src="" alt="" id="footer-img">
-</body>
-</html>
+{% endblock %}
