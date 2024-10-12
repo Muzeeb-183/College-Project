@@ -4,6 +4,14 @@
 
 {% block additional_styles %}
 <link rel="stylesheet" href="{{ url_for('static', filename='subjects.css') }}"> 
+a:hover {
+    background-color: var(--design-color1);
+    color: black;
+}
+.container{
+    margin-left: 300px;
+    margin-right: 380px;
+}
 {% endblock %}
 
 {% block content %}
