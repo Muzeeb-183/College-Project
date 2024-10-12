@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"> <!-- Link to general stylesheet -->
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
+
     {% block additional_styles %}{% endblock %} <!-- Placeholder for additional stylesheets -->
     <title>{% block title %}Home{% endblock %}</title> <!-- Title block to be overridden -->
 </head>
