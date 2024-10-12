@@ -2,20 +2,26 @@
 
 {% block title %}Home{% endblock %} <!-- Sets the title for the index page -->
 
-{% block content %}
-    <!-- Year Selection -->
-    <section class="First Section-one">
-        <div class="btns">
-            <a href="{{ url_for('regulations')}}">First Year</a>
-            <a href="{{ url_for('regulations')}}">Second Year</a>
-            <a href="{{ url_for('regulations')}}">Third Year</a>
-            <a href="{{ url_for('regulations')}}">Fourth Year</a>
-        </div>
-
-        <div class="content imgs">
-            <div class="content img">
-                <img src="" alt="">
-            </div>
-        </div>
-    </section>
+{% block additional_styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='subjects.css') }}"> 
+<style>
+a:hover {
+    background-color: var(--design-color1);
+    color: black;
+}
+</style>
 {% endblock %}
+
+{% block content %}
+    <header>
+        <h1>Regulation</h1>
+    </header>
+    <br>
+    <div class="container subjects">
+        <a href=""><br> AR - 17</a>
+        <a href="{{ url_for('AR_20_semesters')}}"><br> AR - 20</a>
+        <a href="{{ url_for('AR_23_semesters')}}"><br> AR - 23</a>
+    </div>
+{% endblock %}
+
+
