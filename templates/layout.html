@@ -21,9 +21,16 @@
         <div class="menu-btns">
             <a href="{{ url_for('index') }}">Home</a>
             <a href="{{ url_for('about') }}">About</a>
-            <a href="{{ url_for('signin') }}">Sign In</a>
-            <a href="{{ url_for('signup') }}">Sign Up</a> <!-- New link to sign-up page -->
-            
+
+            <!-- Conditional Links based on login status -->
+            {% if session.get('user_id') %}
+                <!-- Show Sign Out if the user is logged in -->
+                <a href="{{ url_for('signout') }}">Sign Out</a>
+            {% else %}
+                <!-- Show Sign In and Sign Up if the user is not logged in -->
+                <a href="{{ url_for('signin') }}">Sign In</a>
+                <a href="{{ url_for('signup') }}">Sign Up</a>
+            {% endif %}
         </div>
     </nav>
 

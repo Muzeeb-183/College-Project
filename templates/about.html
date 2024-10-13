@@ -1,7 +1,45 @@
 {% extends "plainlayout.html" %}
 
-{% block title %}About{% endblock %} <!-- Sets the title for the index page -->
+{% block title %}About{% endblock %}
+
+{% block additional_styles %}
+<style>
+    .container {
+        color: #ffffff; /* White text color for visibility */
+        padding: 20px;
+    }
+    h1, h2 {
+        color: #f1c40f; /* Gold color for headings to make them stand out */
+    }
+    p {
+        font-size: 16px;
+        line-height: 1.6;
+    }
+    ul {
+        color: #ffffff; /* White color for list items */
+    }
+</style>
+{% endblock %}
 
 {% block content %}
-    
+<div class="container">
+    <h1>About Our Platform</h1>
+    <p>Welcome to our Raghu Helpers Hub, where we aim to support students by providing a wide range of study materials. Whether you're preparing for mid-term exams, final semesters, or supplementary papers, we've got you covered.</p>
+
+    <h2>Our Mission</h2>
+    <p>We believe that easy access to study resources can make a significant difference in a student's academic journey. Our platform is designed to be a one-stop solution for:</p>
+    <ul>
+        <li>Chapter-wise PDF materials for in-depth understanding.</li>
+        <li>Previous mid-term and semester exam papers for effective practice.</li>
+        <li>Supplementary exam papers for additional preparation.</li>
+    </ul>
+
+    <h2>Why Choose Us?</h2>
+    <p>We are committed to keeping our resources up to date and easily accessible to all students. Our content is curated and organized by academic experts to ensure you get the most relevant and helpful material.</p>
+
+    <h2>Stay Updated</h2>
+    <p>We continuously update our platform with new resources, so check back often to find the latest study materials.</p>
+
+    <p>Thank you for choosing our platform to enhance your learning journey. Together, let's make academic success easier and more achievable!</p>
+</div>
 {% endblock %}

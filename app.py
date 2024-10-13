@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 
@@ -41,6 +42,7 @@ def index():
     return render_template("index.html")
 
 # Sign-in route
+# Sign-in route
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
     if request.method == "POST":
@@ -49,11 +51,13 @@ def signin():
         user = User.query.filter_by(email=email, password=password).first()
         if user:
             flash("Login successful!", "success")
-            # Optional: Store user info in session if needed
+            session['user_id'] = user.id  # Store user id in session
+            session['user_email'] = user.email  # Optionally store user email
             return redirect(url_for("index"))
         else:
             flash("Invalid credentials. Please try again.", "danger")
     return render_template("signin.html")
+
 
 # Sign-up route
 @app.route("/signup", methods=["GET", "POST"])
@@ -70,6 +74,12 @@ def signup():
             flash("Sign up successful! You can now log in.", "success")
             return redirect(url_for("signin"))
     return render_template("signup.html")
+# Sign-out route
+@app.route("/signout")
+def signout():
+    session.clear()  # Clear all session data
+    flash("You have been logged out.", "success")
+    return redirect(url_for("signin"))
 
 @app.route("/about", methods=["GET", "POST"])
 def about():

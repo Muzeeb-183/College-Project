@@ -5,17 +5,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"> <!-- Link to general stylesheet -->
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.ico') }}" type="image/x-icon">
     {% block additional_styles %}{% endblock %} <!-- Placeholder for additional stylesheets -->
     <title>{% block title %}About{% endblock %}</title> <!-- Title block to be overridden -->
 </head>
 <body>
-    
+    <nav>
+    <div class="logo">
+        <a href="{{ url_for('index') }}">
+            <h1>R<span>E</span>C</h1>
+        </a>
+    </div>
+    <div class="menu-btns">
+        <a href="{{ url_for('index') }}">Home</a>    
+    </div>
     <!-- Main content section -->
     <div class="container">
         {% block content %}
         <!-- This block will be overridden by child templates -->
         {% endblock %}
     </div>
+</nav>
 
 </body>
 </html>
