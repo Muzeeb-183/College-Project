@@ -1,4 +1,3 @@
-
 {% extends "layout.html" %}
 
 {% block title %}Sign-In{% endblock %}
@@ -9,15 +8,25 @@
 
 {% block content %}
 <div class="container">
+    {% with messages = get_flashed_messages(with_categories=True) %}
+      {% if messages %}
+        <ul>
+        {% for category, message in messages %}
+          <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+    
     <form action="{{ url_for('signin') }}" method="POST">
         <pre><label for="email">Email</label>     <i class="ri-mail-line"></i></pre><br>
-        <input type="email" id="email" placeholder="college mail"> <br><br><br>
+        <input type="email" id="email" name="email" placeholder="college mail" required> <br><br><br>
         <pre><label for="password">Password</label>     <i class="ri-lock-line"></i></pre><br>
         <div class="password-container">
-            <input type="password" id="password" placeholder="password">
+            <input type="password" id="password" name="password" placeholder="password" required>
             <img src="{{ url_for('static', filename='images/eye-open.png') }}" id="eyeicon" alt="eye icon">
         </div>
-        <button>Submit</button>
+        <button type="submit">Submit</button>
     </form>
 </div>
 
