@@ -2,6 +2,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session  # Handles user sessions
 from flask_sqlalchemy import SQLAlchemy  # Manages SQLite database interactions
+from werkzeug.security import generate_password_hash, check_password_hash  # For password hashing
 
 # Set up the Flask application
 app = Flask(__name__)
@@ -22,7 +23,7 @@ db = SQLAlchemy(app)  # Initialize database connection
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)  # The unique user ID (primary key)
     email = db.Column(db.String(120), unique=True, nullable=False)  # User's email address (must be unique)
-    password = db.Column(db.String(200), nullable=False)  # User's password (stored securely)
+    password_hash = db.Column(db.String(200), nullable=False)  # Hashed password
 
     # Representation of a User instance, useful for debugging or logging
     def __repr__(self):
@@ -46,14 +47,14 @@ def after_request(response):
 def index():
     return render_template("index.html")  # Render the home page template
 
-# Sign-in route that handles login functionality
+# Sign-in route that handles login functionality using hashed password verification
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
     if request.method == "POST":  # If the form is submitted (POST request)
         email = request.form.get("email")  # Get the user's email from the form
         password = request.form.get("password")  # Get the user's password from the form
-        user = User.query.filter_by(email=email, password=password).first()  # Check if the user exists in the database
-        if user:  # If a valid user is found
+        user = User.query.filter_by(email=email).first()  # Find the user by email
+        if user and check_password_hash(user.password_hash, password):  # Validate the password against the hash
             flash("Login successful!", "success")  # Display a success message
             session['user_id'] = user.id  # Store the user's ID in the session for authentication
             session['user_email'] = user.email  # Optionally store the email in the session
@@ -62,7 +63,7 @@ def signin():
             flash("Invalid credentials. Please try again.", "danger")  # Display an error message for invalid login
     return render_template("signin.html")  # Render the login page for GET requests or failed login attempts
 
-# Sign-up route that handles user registration
+# Sign-up route that handles user registration with hashed passwords
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":  # If the form is submitted (POST request)
@@ -71,7 +72,8 @@ def signup():
         if User.query.filter_by(email=email).first():  # Check if the email is already registered
             flash("Email already registered. Please use a different email.", "danger")  # Show an error if the email exists
         else:
-            new_user = User(email=email, password=password)  # Create a new user with the provided email and password
+            password_hash = generate_password_hash(password)  # Hash the password before storing
+            new_user = User(email=email, password_hash=password_hash)  # Create a new user with the hashed password
             db.session.add(new_user)  # Add the new user to the database
             db.session.commit()  # Commit the changes to save the new user
             flash("Sign up successful! You can now log in.", "success")  # Display a success message
