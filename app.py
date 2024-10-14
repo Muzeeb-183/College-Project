@@ -162,7 +162,7 @@ def sujectsInside():
 
 @app.route("/chapter_wise", methods=["GET", "POST"])
 def chapter_wise():
-    return render_template("chapters.html")
+    return render_template("chapterss.html")
 
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
