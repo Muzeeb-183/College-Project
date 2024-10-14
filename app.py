@@ -154,9 +154,38 @@ def ar_23_three_one():
 @app.route("/ar_23_three_two", methods=["GET", "POST"])
 def ar_23_three_two():
     return render_template("ar23_three_two.html")  # Render AR23 third-year second-semester page
+
+
 @app.route("/sujectsInside", methods=["GET", "POST"])
 def sujectsInside():
     return render_template("subjectsInsideContent.html")
+
+@app.route("/chapter_wise", methods=["GET", "POST"])
+def chapter_wise():
+    return render_template("chapters.html")
+
+@app.route("/notes", methods=["GET", "POST"])
+def notes():
+    return render_template("notes.html")
+
+@app.route('/question_banks')
+def question_banks():
+    # Your code here
+    return render_template('questionBank.html')
+                           
+@app.route("/semester_papers", methods=["GET", "POST"])
+def semester_papers():
+    return render_template("semPapers.html")
+
+
+@app.route("/mid_papers", methods=["GET", "POST"])
+def mid_papers():
+    return render_template("midPapers.html")
+
+@app.route("/supply_papers", methods=["GET", "POST"])
+def supply_papers():
+    return render_template("supplyPapers.html")
+
 # Main entry point to start the Flask app
 if __name__ == "__main__":
     app.run(debug=True)  # Run the Flask app in debug mode
