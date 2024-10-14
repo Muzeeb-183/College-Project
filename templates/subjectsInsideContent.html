@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display+SC:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100..900&display=swap');
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            letter-spacing: 2px;
+        }
+
+        :root {
+            --main-color: #ffffff;
+            --primary-color: #000000ea;
+            --design-color1: rgba(224, 193, 15, 0.877);
+            --design-color2: rgb(31, 133, 31);
+            --main-font: "Playfair Display SC", serif;
+            --primary-font: "Roboto Slab", serif;
+        }
+
+        body {
+            background-color: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start; /* Align items at the start */
+            min-height: 100vh; /* Use full height of the viewport */
+            margin-top: 60px; /* Leave space for the navigation bar */
+        }
+
+        .wrapper {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start; /* Align items to the top */
+            width: 100%;
+            max-width: 1200px; /* Max width for larger screens */
+            padding: 1rem; /* Padding around the wrapper */
+        }
+
+        .container {
+            border: 2px solid var(--main-color);
+            width: 100%;
+            max-width: 400px; /* Set a max width */
+            min-height: 400px; /* Set a minimum height */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            background-color: var(--main-color);
+            padding: 40px; /* Increased padding */
+            border-radius: 8px; /* Rounded corners for aesthetics */
+        }
+
+        .container a {
+            text-decoration: none;
+            color: var(--main-color);
+            background-color: var(--design-color1);
+            border: 1px solid var(--main-color);
+            padding: 10px 15px; /* Add horizontal padding */
+            width: 100%; /* Full width links */
+            text-align: center; /* Center text */
+            margin: 5px 0; /* Spacing between links */
+            border-radius: 4px; /* Rounded corners for links */
+        }
+
+        .image-container {
+            display: flex;
+            flex-direction: column; /* Stack images vertically */
+            align-items: center; /* Center images horizontally */
+            width: 250px; /* Fixed width for image containers */
+        }
+
+        .image-container img {
+            width: 250px; /* Fixed width */
+            height: 350px; /* Fixed height */
+            object-fit: cover; /* Maintain aspect ratio */
+            margin: 5px 0; /* Space between images */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .wrapper {
+                flex-direction: column; /* Stack the container and images on smaller screens */
+                align-items: center; /* Center items */
+            }
+            .container {
+                width: 90%; /* Full width for tablets */
+                margin: 1rem auto; /* Center container */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container {
+                padding: 20px; /* Adjust padding on small screens */
+                min-height: 300px; /* Adjust min height for small screens */
+            }
+            .image-container img {
+                width: 100%; /* Make images responsive on small screens */
+                height: auto; /* Maintain aspect ratio */
+            }
+        }
+    </style>
+    <title>Subjects-Content</title>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="image-container">
+            <img src="six.avif" alt="Left Image 1">
+            <img src="three.avif" alt="Left Image 2">
+        </div>
+
+        <div class="container">
+            <a href="Chapters.html">Chapter Wise Pdfs</a>
+            <a href="Notes.html">Hand-Written Notes</a>
+            <a href="questionBank.html">Question Banks</a>
+            <a href="semPapers.html">Semester Papers</a>
+            <a href="midPapers.html">Mid-Papers</a>
+            <a href="supplyPapers.html">Supply-Papers</a>
+        </div>
+
+        <div class="image-container">
+            <img src="four.avif" alt="Right Image 1">
+            <img src="five.avif" alt="Right Image 2">
+        </div>
+    </div>
+</body>
+</html>
