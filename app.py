@@ -154,7 +154,9 @@ def ar_23_three_one():
 @app.route("/ar_23_three_two", methods=["GET", "POST"])
 def ar_23_three_two():
     return render_template("ar23_three_two.html")  # Render AR23 third-year second-semester page
-
+@app.route("/sujectsInside", methods=["GET", "POST"])
+def sujectsInside():
+    return render_template("subjectsInsideContent.html")
 # Main entry point to start the Flask app
 if __name__ == "__main__":
     app.run(debug=True)  # Run the Flask app in debug mode
