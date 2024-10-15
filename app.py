@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from flask_session import Session  # Handles user sessions
 from flask_sqlalchemy import SQLAlchemy  # Manages SQLite database interactions
 from werkzeug.security import generate_password_hash, check_password_hash  # For password hashing
+import os  # For file path manipulation
 
 # Set up the Flask application
 app = Flask(__name__)
@@ -14,6 +15,10 @@ app.config["SESSION_TYPE"] = "filesystem"  # Session data will be saved in the f
 # Configure the database connection (SQLite in this case) and disable unnecessary tracking of changes
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Set up SQLite to store user data
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking to save resources
+
+# Define the upload folder
+UPLOAD_FOLDER = os.path.join('static', 'uploads')  # Directory where uploaded files will be saved
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create the upload folder if it doesn't exist
 
 # Initialize session and database components
 Session(app)  # Initialize session management
@@ -29,6 +34,20 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
+# Define the Upload model (represents the structure of the "uploads" table in the database)
+class Upload(db.Model):
+    id = db.Column(db.Integer, primary_key=True)  # The unique upload ID (primary key)
+    regulation = db.Column(db.String, nullable=False)  # Regulation associated with the upload
+    semester = db.Column(db.String, nullable=False)  # Semester associated with the upload
+    subject = db.Column(db.String, nullable=False)  # Subject associated with the upload
+    filename = db.Column(db.String, nullable=False)  # Original filename of the uploaded file
+    filepath = db.Column(db.String, nullable=False)  # Path where the file is stored
+    uploaded_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # Timestamp of upload
+
+    # Representation of an Upload instance, useful for debugging or logging
+    def __repr__(self):
+        return f'<Upload {self.filename}>'
+
 # Create the database tables if they don't already exist
 with app.app_context():
     db.create_all()  # Create all tables based on the defined models
@@ -41,7 +60,6 @@ def after_request(response):
     response.headers["Expires"] = 0  # Immediately expire the response
     response.headers["Pragma"] = "no-cache"  # Disable caching
     return response
-
 # Home route that renders the homepage (index.html)
 @app.route("/")
 def index():
@@ -160,9 +178,29 @@ def ar_23_three_two():
 def sujectsInside():
     return render_template("subjectsInsideContent.html")
 
+
 @app.route("/chapter_wise", methods=["GET", "POST"])
 def chapter_wise():
-    return render_template("chapterss.html")
+    if request.method == "POST":  # If the form is submitted (POST request)
+        regulation = request.form.get("regulation")  # Get the regulation from the form
+        semester = request.form.get("semester")  # Get the semester from the form
+        subject = request.form.get("subject")  # Get the subject from the form
+        uploaded_file = request.files["file"]  # Get the uploaded file from the form
+        
+        if uploaded_file.filename:  # If a filename was provided
+            filename = uploaded_file.filename  # Get the original filename
+            filepath = os.path.join(UPLOAD_FOLDER, filename)  # Create a complete path to save the file
+            uploaded_file.save(filepath)  # Save the uploaded file to the specified path
+            
+            # Create a new Upload instance and add it to the database
+            new_upload = Upload(regulation=regulation, semester=semester, subject=subject, filename=filename, filepath=filepath)
+            db.session.add(new_upload)  # Add the upload entry to the database
+            db.session.commit()  # Commit the changes to save the new upload
+            flash("File uploaded successfully!", "success")  # Display a success message
+
+        return redirect(url_for("chapter_wise"))  # Redirect back to the chapter upload page
+
+    return render_template("chapterss.html") 
 
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
