@@ -454,6 +454,17 @@
     <title>Chapters</title>
 </head>
 <body>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="regulation" value="{{ regulation }}">
+        <input type="hidden" name="semester" value="{{ semester }}">
+        <input type="hidden" name="subject" value="{{ subject }}">
+        
+        <label for="file">Upload Chapter Wise PDF:</label>
+        <input type="file" name="file" required>
+        
+        <button type="submit">Upload</button>
+    </form>
+    
     <div class="container">
         <h1>Upload or Download Files</h1>
         <input type="text" id="taskInput" placeholder="Add ...">

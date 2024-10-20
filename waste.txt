@@ -1,0 +1,43 @@
+College Project/
+│
+├── instance/
+│   └── users.db         # SQLite database file created by Flask
+│
+├── templates/           # HTML templates
+│   ├── index.html
+│   ├── signin.html
+│   ├── signup.html
+│   ├── about.html
+│   ├── regulations.html
+│   ├── ar20_semesters.html
+│   ├── ar20_one_one.html
+│   ├── ar20_one_two.html
+│   ├── ar20_two_one.html
+│   ├── ar20_two_two.html
+│   ├── ar20_three_one.html
+│   ├── ar20_three_two.html
+│   ├── ar23_semesters.html
+│   ├── ar23_one_one.html
+│   ├── ar23_one_two.html
+│   ├── ar23_two_one.html
+│   ├── ar23_two_two.html
+│   ├── ar23_three_one.html
+│   ├── ar23_three_two.html
+│   ├── layout.html
+│   ├── layout2.html
+│   ├── midPapers.html
+│   ├── semPapers.html
+│   ├── chapterss.html
+│   ├── notes.html
+│   ├── subjectsInsideContent.html
+│   ├── questionBank.html
+│   └── supplyPapers.html
+│   └── plainlayout.html
+│
+├── static/              # Static files (CSS, JS, images)
+│   ├── style1.css       # Stylesheet for the project
+│   └── images/          # Folder for images
+│       └── eye-open.png
+│
+├── app.py               # Main Flask application file
+└── requirements.txt      # File listing the dependencies of the project

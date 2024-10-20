@@ -105,7 +105,15 @@
         }
     </style>
     <title>Subjects-Content</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subjects-Content</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style1.css') }}">
 </head>
+
 
 <body>
     <div class="wrapper">
@@ -115,7 +123,16 @@
         </div>
 
         <div class="container">
-            <a href="{{ url_for('chapter_wise')}}">Chapter Wise Pdfs</a>
+            <h1>Upload Options for {{ subject }}</h1>
+            <form action="{{ url_for('chapter_wise') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="regulation" value="{{ regulation }}">
+                <input type="hidden" name="semester" value="{{ semester }}">
+                <input type="hidden" name="subject" value="{{ subject }}">
+                <label for="file">Upload Chapter Wise PDF:</label>
+                <input type="file" name="file" id="file" required>
+                <button type="submit">Upload</button>
+            </form>
+            <br>
             <a href="{{ url_for('notes')}}">Hand-Written Notes</a>
             <a href="{{ url_for('question_banks') }}">Question Banks</a>
             <a href="{{ url_for('semester_papers')}}">Semester Papers</a>
@@ -130,3 +147,4 @@
     </div>
 </body>
 </html>
+

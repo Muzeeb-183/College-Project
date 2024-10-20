@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy  # Manages SQLite database interactions
 from werkzeug.security import generate_password_hash, check_password_hash  # For password hashing
 import os  # For file path manipulation
 
+
 # Set up the Flask application
 app = Flask(__name__)
 
@@ -14,6 +15,7 @@ app.config["SESSION_TYPE"] = "filesystem"  # Session data will be saved in the f
 
 # Configure the database connection (SQLite in this case) and disable unnecessary tracking of changes
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Set up SQLite to store user data
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking to save resources
 
 # Define the upload folder
@@ -34,19 +36,19 @@ class User(db.Model):
     def __repr__(self):
         return f'<User {self.email}>'
 
-# Define the Upload model (represents the structure of the "uploads" table in the database)
 class Upload(db.Model):
-    id = db.Column(db.Integer, primary_key=True)  # The unique upload ID (primary key)
-    regulation = db.Column(db.String, nullable=False)  # Regulation associated with the upload
-    semester = db.Column(db.String, nullable=False)  # Semester associated with the upload
-    subject = db.Column(db.String, nullable=False)  # Subject associated with the upload
-    filename = db.Column(db.String, nullable=False)  # Original filename of the uploaded file
-    filepath = db.Column(db.String, nullable=False)  # Path where the file is stored
-    uploaded_at = db.Column(db.DateTime, default=db.func.current_timestamp())  # Timestamp of upload
+    id = db.Column(db.Integer, primary_key=True)
+    regulation = db.Column(db.String, nullable=False)
+    semester = db.Column(db.String, nullable=False)
+    subject = db.Column(db.String, nullable=False)
+    filename = db.Column(db.String, nullable=False)
+    file = db.Column(db.LargeBinary, nullable=False)  # Store file as BLOB
+    uploaded_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-    # Representation of an Upload instance, useful for debugging or logging
+
     def __repr__(self):
         return f'<Upload {self.filename}>'
+
 
 # Create the database tables if they don't already exist
 with app.app_context():
@@ -179,28 +181,34 @@ def sujectsInside():
     return render_template("subjectsInsideContent.html")
 
 
-@app.route("/chapter_wise", methods=["GET", "POST"])
+@app.route('/chapter_wise', methods=['POST'])
 def chapter_wise():
-    if request.method == "POST":  # If the form is submitted (POST request)
-        regulation = request.form.get("regulation")  # Get the regulation from the form
-        semester = request.form.get("semester")  # Get the semester from the form
-        subject = request.form.get("subject")  # Get the subject from the form
-        uploaded_file = request.files["file"]  # Get the uploaded file from the form
-        
-        if uploaded_file.filename:  # If a filename was provided
-            filename = uploaded_file.filename  # Get the original filename
-            filepath = os.path.join(UPLOAD_FOLDER, filename)  # Create a complete path to save the file
-            uploaded_file.save(filepath)  # Save the uploaded file to the specified path
-            
-            # Create a new Upload instance and add it to the database
-            new_upload = Upload(regulation=regulation, semester=semester, subject=subject, filename=filename, filepath=filepath)
-            db.session.add(new_upload)  # Add the upload entry to the database
-            db.session.commit()  # Commit the changes to save the new upload
-            flash("File uploaded successfully!", "success")  # Display a success message
+    regulation = request.form['regulation']
+    semester = request.form['semester']
+    subject = request.form['subject']
+    file = request.files['file']
 
-        return redirect(url_for("chapter_wise"))  # Redirect back to the chapter upload page
+    # Read the file data
+    file_data = file.read()
 
-    return render_template("chapterss.html") 
+    # Create a new upload record with the file data
+    new_upload = Upload(
+        regulation=regulation,
+        semester=semester,
+        subject=subject,
+        filename=file.filename,
+        file=file_data  # Store the file data as BLOB
+    )
+
+    db.session.add(new_upload)
+    db.session.commit()
+    return redirect(url_for('success_page'))  # Redirect to the success page
+
+
+@app.route('/success')
+def success_page():
+    return "File uploaded successfully!"
+
 
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
