@@ -198,6 +198,19 @@
         }
     </style>
     <script>
+        // Initialize variables to hold regulation, semester, and subject
+        let regulation = '';
+        let semester = '';
+        let subject = '';
+
+        // Function to extract parameters from the URL
+        function getUrlParams() {
+            const params = window.location.pathname.split('/');
+            regulation = params[2]; // regulation is the second parameter in the URL
+            semester = params[3]; // semester is the third parameter in the URL
+            subject = params[4]; // subject is the fourth parameter in the URL
+        }
+
         function addTask() {
             const input = document.getElementById('taskInput');
             const fileInput = document.getElementById('fileInput');
@@ -249,15 +262,6 @@
                                 link.textContent = `${file.name} (click to view)`;
                                 link.target = "_blank"; // Opens in a new tab or application
                                 taskFileDiv.appendChild(link);
-                            } else if (file.type === 'text/csv' || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
-                                const message = document.createElement('div');
-                                message.textContent = `${file.name} uploaded. Click to download.`;
-                                const link = document.createElement('a');
-                                link.href = e.target.result;
-                                link.download = file.name;
-                                link.textContent = "Download";
-                                message.appendChild(link);
-                                taskFileDiv.appendChild(message);
                             } else {
                                 const message = document.createElement('div');
                                 message.textContent = `${file.name} uploaded. Click to view.`;
@@ -268,6 +272,18 @@
                                 message.appendChild(link);
                                 taskFileDiv.appendChild(message);
                             }
+
+                            // Store the regulation, semester, and subject with the upload
+                            const metadata = {
+                                regulation: regulation,
+                                semester: semester,
+                                subject: subject,
+                                taskTitle: input.value,
+                                fileData: e.target.result,
+                                fileType: file.type,
+                            };
+
+                            console.log("Upload Metadata:", metadata);
                         };
 
                         fileReader.readAsDataURL(file);
@@ -290,193 +306,94 @@
             taskDiv.remove();
         }
 
-        function downloadFile(icon) {
-            const taskDiv = icon.closest('.task');
-            const taskFileDiv = taskDiv.querySelector('.taskFile');
-            const links = taskFileDiv.querySelectorAll('a');
-
-            links.forEach(link => {
-                const downloadLink = document.createElement('a');
-                downloadLink.href = link.href;
-                downloadLink.download = link.textContent.split(' (')[0]; // Use the file name as the download name
-                document.body.appendChild(downloadLink); // Append to body
-                downloadLink.click(); // Trigger download
-                document.body.removeChild(downloadLink); // Remove from body
-            });
-
-            // Handle downloading images
-            const images = taskFileDiv.querySelectorAll('img');
-            images.forEach(img => {
-                const downloadLink = document.createElement('a');
-                downloadLink.href = img.src; // Use image source
-                downloadLink.download = 'downloaded_image.jpg'; // You might want to customize this for each image
-                document.body.appendChild(downloadLink);
-                downloadLink.click();
-                document.body.removeChild(downloadLink);
-            });
-        }
-
         function toggleLike(icon) {
-            const likeCountSpan = icon.parentNode.querySelector('.likeCount');
-            const dislikeIcon = icon.parentNode.querySelector('.dislike-icon');
-            const dislikeCountSpan = dislikeIcon.parentNode.querySelector('.dislikeCount');
-
-            let likeCount = parseInt(likeCountSpan.textContent);
-            let dislikeCount = parseInt(dislikeCountSpan.textContent);
-
-            if (icon.classList.contains('liked')) {
-                likeCount--;
-                icon.classList.remove('liked');
-            } else {
-                likeCount++;
-                icon.classList.add('liked');
-                if (dislikeIcon.classList.contains('disliked')) {
-                    dislikeCount--;
-                    dislikeIcon.classList.remove('disliked');
-                }
-            }
-
-            likeCountSpan.textContent = likeCount;
-            dislikeCountSpan.textContent = dislikeCount;
+            const likeCount = icon.nextElementSibling;
+            let count = parseInt(likeCount.textContent);
+            icon.classList.toggle('liked');
+            count += icon.classList.contains('liked') ? 1 : -1;
+            likeCount.textContent = count;
         }
 
         function toggleDislike(icon) {
-            const dislikeCountSpan = icon.parentNode.querySelector('.dislikeCount');
-            const likeIcon = icon.parentNode.querySelector('.like-icon');
-            const likeCountSpan = likeIcon.parentNode.querySelector('.likeCount');
-
-            let dislikeCount = parseInt(dislikeCountSpan.textContent);
-            let likeCount = parseInt(likeCountSpan.textContent);
-
-            if (icon.classList.contains('disliked')) {
-                dislikeCount--;
-                icon.classList.remove('disliked');
-            } else {
-                dislikeCount++;
-                icon.classList.add('disliked');
-                if (likeIcon.classList.contains('liked')) {
-                    likeCount--;
-                    likeIcon.classList.remove('liked');
-                }
-            }
-
-            dislikeCountSpan.textContent = dislikeCount;
-            likeCountSpan.textContent = likeCount;
+            const dislikeCount = icon.nextElementSibling;
+            let count = parseInt(dislikeCount.textContent);
+            icon.classList.toggle('disliked');
+            count += icon.classList.contains('disliked') ? 1 : -1;
+            dislikeCount.textContent = count;
         }
 
         function toggleCommentInput(icon) {
-            const commentInput = icon.parentNode.parentNode.querySelector('.comment-input');
-            commentInput.style.display = commentInput.style.display === 'none' || !commentInput.style.display ? 'block' : 'none';
+            const commentInput = icon.nextElementSibling;
+            commentInput.style.display = commentInput.style.display === 'none' || commentInput.style.display === '' ? 'inline-block' : 'none';
         }
 
         function saveComment(event, input) {
             if (event.key === 'Enter') {
-                commitComment(input);
+                const commentSection = input.closest('.task').querySelector('.comment-section');
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                commentDiv.textContent = input.value;
+
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+                const timestampDiv = document.createElement('span');
+                timestampDiv.className = 'comment-timestamp';
+                timestampDiv.textContent = ` (Added on: ${timestamp})`;
+                commentDiv.appendChild(timestampDiv);
+
+                commentSection.appendChild(commentDiv);
+                input.value = '';
             }
         }
 
         function commitComment(icon) {
-            const taskDiv = icon.closest('.task');
-            const commentInput = taskDiv.querySelector('.comment-input');
-            const commentCountSpan = taskDiv.querySelector('.commentCount');
-            const commentSection = taskDiv.querySelector('.comment-section');
-
-            let commentCount = parseInt(commentCountSpan.textContent);
-            const newComment = commentInput.value.trim();
-
-            if (newComment) {
-                const now = new Date();
-                const timestamp = now.toLocaleString();
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                commentDiv.innerHTML = `${newComment} <span class="comment-timestamp">(Commented on: ${timestamp})</span>`;
-
-                commentSection.prepend(commentDiv);
-                commentInput.value = ''; // Clear input field
-
-                commentCount++;
-                commentCountSpan.textContent = commentCount;
-
-                // Limit displayed comments to 3
-                const comments = Array.from(commentSection.children);
-                if (comments.length > 3) {
-                    const extraComments = comments.slice(3);
-                    extraComments.forEach(comment => comment.style.display = 'none');
-                    const moreLink = document.createElement('span');
-                    moreLink.className = 'more-comments';
-                    moreLink.textContent = 'More...';
-                    moreLink.onclick = () => {
-                        extraComments.forEach(comment => comment.style.display = 'block');
-                        moreLink.style.display = 'none';
-                        const lessLink = document.createElement('span');
-                        lessLink.className = 'less-comments';
-                        lessLink.textContent = 'Less...';
-                        lessLink.onclick = () => {
-                            extraComments.forEach(comment => comment.style.display = 'none');
-                            moreLink.style.display = 'block';
-                            lessLink.remove();
-                        };
-                        commentSection.appendChild(lessLink);
-                    };
-                    commentSection.appendChild(moreLink);
-                }
+            const commentInput = icon.previousElementSibling;
+            if (commentInput.value) {
+                saveComment({ key: 'Enter' }, commentInput);
             }
+        }
+
+        function downloadFile(icon) {
+            const taskDiv = icon.closest('.task');
+            const fileData = taskDiv.querySelector('.taskFile img, .taskFile a').href;
+
+            const a = document.createElement('a');
+            a.href = fileData;
+            a.download = ''; // You can specify a filename if you want
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         function openModal(src) {
-            const modal = document.getElementById('modal');
-            const modalImage = document.getElementById('modalImage');
-            const modalPDF = document.getElementById('modalPDF');
-
-            if (src.endsWith('.pdf')) {
-                modalPDF.src = src;
-                modalImage.style.display = 'none';
-                modalPDF.style.display = 'block';
-            } else {
-                modalImage.src = src;
-                modalImage.style.display = 'block';
-                modalPDF.style.display = 'none';
-            }
-
-            modal.style.display = 'block';
+            const modal = document.getElementById("myModal");
+            const modalImg = document.getElementById("img01");
+            modal.style.display = "block";
+            modalImg.src = src;
         }
 
         function closeModal() {
-            const modal = document.getElementById('modal');
-            const modalImage = document.getElementById('modalImage');
-            const modalPDF = document.getElementById('modalPDF');
-
-            modal.style.display = 'none';
-            modalImage.src = '';
-            modalPDF.src = '';
+            const modal = document.getElementById("myModal");
+            modal.style.display = "none";
         }
+
+        window.onload = getUrlParams; // Call this function when the page loads
     </script>
-    <title>Chapters</title>
 </head>
 <body>
-    <form method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="regulation" value="{{ regulation }}">
-        <input type="hidden" name="semester" value="{{ semester }}">
-        <input type="hidden" name="subject" value="{{ subject }}">
-        
-        <label for="file">Upload Chapter Wise PDF:</label>
-        <input type="file" name="file" required>
-        
-        <button type="submit">Upload</button>
-    </form>
-    
     <div class="container">
-        <h1>Upload or Download Files</h1>
-        <input type="text" id="taskInput" placeholder="Add ...">
-        <input type="file" id="fileInput" accept=".pdf, .jpg, .png, .csv, .xlsx" multiple>
+        <h1>Chapter Upload</h1>
+        <input type="text" id="taskInput" placeholder="Enter chapter title...">
+        <input type="file" id="fileInput" accept="image/*,application/pdf">
         <button onclick="addTask()">Upload</button>
-        <div id="taskList"></div>
-    </div>
 
-    <div id="modal" class="modal" onclick="closeModal()">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img id="modalImage" class="modal-content" style="display: none;">
-        <iframe id="modalPDF" class="modal-content" style="display: none;"></iframe>
+        <div id="taskList"></div>
+
+        <!-- Modal for image preview -->
+        <div id="myModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
     </div>
 </body>
 </html>

@@ -1,4 +1,3 @@
-# Import essential modules from Flask and related libraries
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session  # Handles user sessions
 from flask_sqlalchemy import SQLAlchemy  # Manages SQLite database interactions
@@ -15,7 +14,6 @@ app.config["SESSION_TYPE"] = "filesystem"  # Session data will be saved in the f
 
 # Configure the database connection (SQLite in this case) and disable unnecessary tracking of changes
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Set up SQLite to store user data
-
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking to save resources
 
 # Define the upload folder
@@ -32,7 +30,6 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)  # User's email address (must be unique)
     password_hash = db.Column(db.String(200), nullable=False)  # Hashed password
 
-    # Representation of a User instance, useful for debugging or logging
     def __repr__(self):
         return f'<User {self.email}>'
 
@@ -45,10 +42,8 @@ class Upload(db.Model):
     file = db.Column(db.LargeBinary, nullable=False)  # Store file as BLOB
     uploaded_at = db.Column(db.DateTime, default=db.func.current_timestamp())
 
-
     def __repr__(self):
         return f'<Upload {self.filename}>'
-
 
 # Create the database tables if they don't already exist
 with app.app_context():
@@ -62,6 +57,7 @@ def after_request(response):
     response.headers["Expires"] = 0  # Immediately expire the response
     response.headers["Pragma"] = "no-cache"  # Disable caching
     return response
+
 # Home route that renders the homepage (index.html)
 @app.route("/")
 def index():
@@ -124,7 +120,9 @@ def AR_20_semesters():
 
 @app.route("/one_one", methods=["GET", "POST"])
 def one_one():
-    return render_template("ar20_one_one.html")  # Render AR20 first-year first-semester page
+    session['regulation'] = 'AR20'  # Set appropriate regulation
+    session['semester'] = '1-1'     # Set appropriate semester
+    return render_template('ar20_one_one.html')
 
 @app.route("/one_two", methods=["GET", "POST"])
 def one_two():
@@ -175,34 +173,71 @@ def ar_23_three_one():
 def ar_23_three_two():
     return render_template("ar23_three_two.html")  # Render AR23 third-year second-semester page
 
+# File upload route for handling chapter-wise PDFs and images
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if request.method == "POST":  # If the form is submitted
+        regulation = session.get('regulation')  # Get the regulation from the session
+        semester = session.get('semester')  # Get the semester from the session
+        subject = request.form.get("subject")  # Get the subject from the form
+        file = request.files["file"]  # Get the uploaded file from the form
 
-@app.route("/sujectsInside", methods=["GET", "POST"])
-def sujectsInside():
-    return render_template("subjectsInsideContent.html")
+        # Check if a file is selected
+        if file.filename == "":
+            flash("No file selected. Please choose a file to upload.", "danger")  # Show error if no file selected
+            return redirect(request.url)  # Redirect back to the upload page
+        
+        # Check if the file is a valid PDF or image
+        if file and (file.filename.endswith('.pdf') or file.filename.lower().endswith(('.png', '.jpg', '.jpeg'))):
+            filename = file.filename  # Get the filename of the uploaded file
+            file_path = os.path.join(UPLOAD_FOLDER, filename)  # Define the path for saving the file
+            file.save(file_path)  # Save the file to the designated upload folder
+            
+            # Save file data in the database
+            new_upload = Upload(regulation=regulation, semester=semester, subject=subject, filename=filename, file=file.read())  # Read the file content and create a new upload record
+            db.session.add(new_upload)  # Add the upload record to the database
+            db.session.commit()  # Commit the changes
+
+            flash("File uploaded successfully!", "success")  # Show success message
+            return redirect(url_for("upload"))  # Redirect back to the upload page
+        else:
+            flash("Invalid file type. Please upload a PDF or an image (PNG/JPG).", "danger")  # Show error for invalid file types
+
+    return render_template("upload.html")  
 
 
-@app.route('/chapter_wise', methods=['POST'])
+@app.route("/subjectsInside/<regulation>/<semester>/<subject>", methods=['GET'])
+def subjectsInside(regulation, semester, subject):
+    return render_template('subjectsInsideContent.html', regulation=regulation, semester=semester, subject=subject)
+
+
+@app.route('/chapter_wise', methods=['GET', 'POST'])
 def chapter_wise():
-    regulation = request.form['regulation']
-    semester = request.form['semester']
-    subject = request.form['subject']
-    file = request.files['file']
+    if request.method == 'POST':
+        # Handle the file upload
+        regulation = request.form['regulation']
+        semester = request.form['semester']
+        subject = request.form['subject']
+        file = request.files['file']
 
-    # Read the file data
-    file_data = file.read()
+        # Read the file data
+        file_data = file.read()
 
-    # Create a new upload record with the file data
-    new_upload = Upload(
-        regulation=regulation,
-        semester=semester,
-        subject=subject,
-        filename=file.filename,
-        file=file_data  # Store the file data as BLOB
-    )
+        # Create a new upload record with the file data
+        new_upload = Upload(
+            regulation=regulation,
+            semester=semester,
+            subject=subject,
+            filename=file.filename,
+            file=file_data  # Store the file data as BLOB
+        )
 
-    db.session.add(new_upload)
-    db.session.commit()
-    return redirect(url_for('success_page'))  # Redirect to the success page
+        db.session.add(new_upload)
+        db.session.commit()
+        return redirect(url_for('success_page'))  # Redirect to the success page
+
+    # If GET request, render the form (chapterss.html)
+    return render_template('chapterss.html')
 
 
 @app.route('/success')
