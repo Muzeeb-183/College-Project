@@ -198,7 +198,6 @@
         }
     </style>
     <script>
-        // Initialize variables to hold regulation, semester, and subject
         let regulation = '';
         let semester = '';
         let subject = '';
@@ -206,9 +205,9 @@
         // Function to extract parameters from the URL
         function getUrlParams() {
             const params = window.location.pathname.split('/');
-            regulation = params[2]; // regulation is the second parameter in the URL
-            semester = params[3]; // semester is the third parameter in the URL
-            subject = params[4]; // subject is the fourth parameter in the URL
+            regulation = params[2]; // Assuming regulation is in the second URL segment
+            semester = params[3]; // Assuming semester is in the third URL segment
+            subject = params[4]; // Assuming subject is in the fourth URL segment
         }
 
         function addTask() {
@@ -216,7 +215,7 @@
             const fileInput = document.getElementById('fileInput');
             const taskList = document.getElementById('taskList');
 
-            if (input.value.trim() !== '') {
+            if (input.value.trim() !== '' && fileInput.files.length > 0) {
                 const taskDiv = document.createElement('div');
                 const now = new Date();
                 const timestamp = now.toLocaleString();
@@ -242,57 +241,142 @@
                     <div class="comment-section"></div>
                 `;
 
-                // Handle file upload
-                if (fileInput.files.length > 0) {
-                    const files = Array.from(fileInput.files);
-                    files.forEach(file => {
-                        const fileReader = new FileReader();
+                const taskFileDiv = taskDiv.querySelector('.taskFile');
+                const files = Array.from(fileInput.files);
+                const formData = new FormData();
 
-                        fileReader.onload = function (e) {
-                            const taskFileDiv = taskDiv.querySelector('.taskFile');
+                files.forEach(file => {
+                    const fileReader = new FileReader();
 
-                            if (file.type.startsWith('image/')) {
-                                const img = document.createElement('img');
-                                img.src = e.target.result;
-                                img.onclick = () => openModal(img.src);
-                                taskFileDiv.appendChild(img);
-                            } else if (file.type === 'application/pdf') {
-                                const link = document.createElement('a');
-                                link.href = e.target.result;
-                                link.textContent = `${file.name} (click to view)`;
-                                link.target = "_blank"; // Opens in a new tab or application
-                                taskFileDiv.appendChild(link);
-                            } else {
-                                const message = document.createElement('div');
-                                message.textContent = `${file.name} uploaded. Click to view.`;
-                                const link = document.createElement('a');
-                                link.href = e.target.result;
-                                link.target = "_blank"; // Opens in a new tab or application
-                                link.textContent = "View";
-                                message.appendChild(link);
-                                taskFileDiv.appendChild(message);
-                            }
+                    fileReader.onload = function (e) {
+                        if (file.type.startsWith('image/')) {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.onclick = () => openModal(img.src);
+                            taskFileDiv.appendChild(img);
+                        } else if (file.type === 'application/pdf') {
+                            const link = document.createElement('a');
+                            link.href = e.target.result;
+                            link.textContent = `${file.name} (click to view)`;
+                            link.target = "_blank"; // Opens in a new tab or application
+                            taskFileDiv.appendChild(link);
+                        } else {
+                            const message = document.createElement('div');
+                            message.textContent = `${file.name} uploaded. Click to view.`;
+                            const link = document.createElement('a');
+                            link.href = e.target.result;
+                            link.target = "_blank";
+                            link.textContent = "View";
+                            message.appendChild(link);
+                            taskFileDiv.appendChild(message);
+                        }
 
-                            // Store the regulation, semester, and subject with the upload
-                            const metadata = {
-                                regulation: regulation,
-                                semester: semester,
-                                subject: subject,
-                                taskTitle: input.value,
-                                fileData: e.target.result,
-                                fileType: file.type,
-                            };
+                        formData.append('fileInput', file);
+                    };
 
-                            console.log("Upload Metadata:", metadata);
-                        };
+                    fileReader.readAsDataURL(file);
+                });
 
-                        fileReader.readAsDataURL(file);
-                    });
-                }
+                // Add metadata to FormData
+                formData.append('regulation', regulation);
+                formData.append('semester', semester);
+                formData.append('subject', subject);
+                formData.append('taskTitle', input.value);
 
-                taskList.prepend(taskDiv);
-                input.value = ''; // Clear input field
-                fileInput.value = ''; // Clear file input
+                // Send form data to the server for upload
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error uploading file:', error);
+                });
+
+                taskList.appendChild(taskDiv);
+                input.value = '';
+                fileInput.value = '';
+            }
+        }
+
+        function openModal(src) {
+            const modal = document.getElementById('myModal');
+            const modalImg = document.getElementById('img01');
+            modal.style.display = "block";
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = "none";
+        }
+
+        function toggleLike(icon) {
+            const likeCount = icon.nextElementSibling;
+            let count = parseInt(likeCount.textContent);
+            count++;
+            likeCount.textContent = count;
+            icon.classList.toggle('liked');
+        }
+
+        function toggleDislike(icon) {
+            const dislikeCount = icon.nextElementSibling;
+            let count = parseInt(dislikeCount.textContent);
+            count++;
+            dislikeCount.textContent = count;
+            icon.classList.toggle('disliked');
+        }
+
+        function toggleCommentInput(icon) {
+            const input = icon.parentNode.parentNode.querySelector('.comment-input');
+            input.style.display = input.style.display === 'none' ? 'inline-block' : 'none';
+        }
+
+        function saveComment(event, input) {
+            if (event.key === 'Enter' && input.value.trim() !== '') {
+                const commentSection = input.parentNode.querySelector('.comment-section');
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                commentDiv.textContent = input.value;
+
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+                const timestampDiv = document.createElement('span');
+                timestampDiv.className = 'comment-timestamp';
+                timestampDiv.textContent = `(Commented on: ${timestamp})`;
+
+                commentDiv.appendChild(timestampDiv);
+                commentSection.appendChild(commentDiv);
+                input.value = '';
+                const commentCount = input.parentNode.querySelector('.commentCount');
+                let count = parseInt(commentCount.textContent);
+                commentCount.textContent = count + 1;
+            }
+        }
+
+        function commitComment(icon) {
+            const input = icon.parentNode.querySelector('.comment-input');
+            const commentSection = input.parentNode.querySelector('.comment-section');
+            if (input.value.trim() !== '') {
+                const commentDiv = document.createElement('div');
+                commentDiv.className = 'comment';
+                commentDiv.textContent = input.value;
+
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+                const timestampDiv = document.createElement('span');
+                timestampDiv.className = 'comment-timestamp';
+                timestampDiv.textContent = `(Commented on: ${timestamp})`;
+
+                commentDiv.appendChild(timestampDiv);
+                commentSection.appendChild(commentDiv);
+                input.value = '';
+                const commentCount = input.parentNode.querySelector('.commentCount');
+                let count = parseInt(commentCount.textContent);
+                commentCount.textContent = count + 1;
             }
         }
 
@@ -306,94 +390,43 @@
             taskDiv.remove();
         }
 
-        function toggleLike(icon) {
-            const likeCount = icon.nextElementSibling;
-            let count = parseInt(likeCount.textContent);
-            icon.classList.toggle('liked');
-            count += icon.classList.contains('liked') ? 1 : -1;
-            likeCount.textContent = count;
-        }
-
-        function toggleDislike(icon) {
-            const dislikeCount = icon.nextElementSibling;
-            let count = parseInt(dislikeCount.textContent);
-            icon.classList.toggle('disliked');
-            count += icon.classList.contains('disliked') ? 1 : -1;
-            dislikeCount.textContent = count;
-        }
-
-        function toggleCommentInput(icon) {
-            const commentInput = icon.nextElementSibling;
-            commentInput.style.display = commentInput.style.display === 'none' || commentInput.style.display === '' ? 'inline-block' : 'none';
-        }
-
-        function saveComment(event, input) {
-            if (event.key === 'Enter') {
-                const commentSection = input.closest('.task').querySelector('.comment-section');
-                const commentDiv = document.createElement('div');
-                commentDiv.className = 'comment';
-                commentDiv.textContent = input.value;
-
-                const now = new Date();
-                const timestamp = now.toLocaleString();
-                const timestampDiv = document.createElement('span');
-                timestampDiv.className = 'comment-timestamp';
-                timestampDiv.textContent = ` (Added on: ${timestamp})`;
-                commentDiv.appendChild(timestampDiv);
-
-                commentSection.appendChild(commentDiv);
-                input.value = '';
-            }
-        }
-
-        function commitComment(icon) {
-            const commentInput = icon.previousElementSibling;
-            if (commentInput.value) {
-                saveComment({ key: 'Enter' }, commentInput);
-            }
-        }
-
         function downloadFile(icon) {
             const taskDiv = icon.closest('.task');
-            const fileData = taskDiv.querySelector('.taskFile img, .taskFile a').href;
-
-            const a = document.createElement('a');
-            a.href = fileData;
-            a.download = ''; // You can specify a filename if you want
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const fileUrl = taskDiv.querySelector('.taskFile a').href; // Assuming the first link is the file
+            const link = document.createElement('a');
+            link.href = fileUrl;
+            link.download = '';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
-        function openModal(src) {
-            const modal = document.getElementById("myModal");
-            const modalImg = document.getElementById("img01");
-            modal.style.display = "block";
-            modalImg.src = src;
+        window.onload = function() {
+            getUrlParams();
         }
-
-        function closeModal() {
-            const modal = document.getElementById("myModal");
-            modal.style.display = "none";
-        }
-
-        window.onload = getUrlParams; // Call this function when the page loads
     </script>
 </head>
 <body>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="regulation" value="{{ regulation }}">
+        <input type="hidden" name="semester" value="{{ semester }}">
+        <input type="hidden" name="subject" value="{{ subject }}">
+        <input type="file" name="file" required>
+        <button type="submit">Upload</button>
+    </form>
+    
+    
     <div class="container">
         <h1>Chapter Upload</h1>
-        <input type="text" id="taskInput" placeholder="Enter chapter title...">
-        <input type="file" id="fileInput" accept="image/*,application/pdf">
+        <input type="text" id="taskInput" placeholder="Enter Task Title" />
+        <input type="file" id="fileInput" multiple />
         <button onclick="addTask()">Upload</button>
-
         <div id="taskList"></div>
+    </div>
 
-        <!-- Modal for image preview -->
-        <div id="myModal" class="modal">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <img class="modal-content" id="img01">
-        </div>
+    <div id="myModal" class="modal" onclick="closeModal()">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="img01">
     </div>
 </body>
 </html>

@@ -1,9 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_session import Session  # Handles user sessions
 from flask_sqlalchemy import SQLAlchemy  # Manages SQLite database interactions
 from werkzeug.security import generate_password_hash, check_password_hash  # For password hashing
 import os  # For file path manipulation
-
+from werkzeug.utils import secure_filename
+import sqlite3
+from datetime import datetime
 
 # Set up the Flask application
 app = Flask(__name__)
@@ -16,13 +18,26 @@ app.config["SESSION_TYPE"] = "filesystem"  # Session data will be saved in the f
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'  # Set up SQLite to store user data
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Disable modification tracking to save resources
 
-# Define the upload folder
-UPLOAD_FOLDER = os.path.join('static', 'uploads')  # Directory where uploaded files will be saved
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Create the upload folder if it doesn't exist
+# Define the upload folder and add it to app.config
+app.config['UPLOAD_FOLDER'] = os.path.join('instance')  # Directory where uploaded files will be saved
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)  # Create the upload folder if it doesn't exist
 
+UPLOAD_FOLDER = 'uploads/'
+ALLOWED_EXTENSIONS = {'pdf', 'png', 'jpg', 'jpeg', 'gif'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+# Check for allowed file types
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 # Initialize session and database components
 Session(app)  # Initialize session management
 db = SQLAlchemy(app)  # Initialize database connection
+
+# Continue with the rest of your application code...
+
 
 # Define a User model (represents the structure of the "users" table in the database)
 class User(db.Model):
@@ -59,6 +74,125 @@ def after_request(response):
     return response
 
 # Home route that renders the homepage (index.html)
+
+# File upload route for handling chapter-wise PDFs and images
+# Route to handle file uploads and save data to the database
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    regulation = request.form.get('regulation')
+    semester = request.form.get('semester')
+    subject = request.form.get('subject')
+    
+    # Check if these values are None
+    if regulation is None or semester is None or subject is None:
+        print("Regulation, semester, or subject is None")
+    
+    if 'file' not in request.files:
+        return "No file part", 400
+
+    file = request.files['file']
+    if file.filename == '':
+        return "No selected file", 400
+
+    if file:
+        filename = secure_filename(file.filename)
+        uploaded_at = datetime.utcnow()
+        file_data = file.read()
+
+        # Save to database
+        new_upload = Upload(
+            regulation=regulation,
+            semester=semester,
+            subject=subject,
+            filename=filename,
+            uploaded_at=uploaded_at,
+            file=file_data  # Adjust based on your storage method
+        )
+
+        db.session.add(new_upload)
+        db.session.commit()
+
+        return redirect(url_for('chapter_wise'))  # Redirect to success or similar
+
+    return "Upload failed", 500
+
+
+
+
+
+
+@app.route("/subjectsInside/<regulation>/<semester>/<subject>", methods=['GET'])
+def subjectsInside(regulation, semester, subject):
+    return render_template('subjectsInsideContent.html', regulation=regulation, semester=semester, subject=subject)
+
+@app.route('/chapter_wise', methods=['GET', 'POST'])
+def chapter_wise():
+    if request.method == 'POST':
+        # Handle the file upload
+        regulation = request.form['regulation']
+        semester = request.form['semester']
+        subject = request.form['subject']
+
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        
+        file = request.files['file']
+        
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+
+            # Save the file data to the database
+            file_data = file.read()
+            with sqlite3.connect('instance/users.db') as conn:
+                cursor = conn.cursor()
+                cursor.execute("""
+                    INSERT INTO upload (regulation, semester, subject, filename, file_data, upload_date)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                """, (regulation, semester, subject, filename, file_data, datetime.now()))
+                conn.commit()
+
+            flash('File successfully uploaded')
+            return redirect(url_for('chapter_wise'))
+
+        flash('File type not allowed')
+        return redirect(request.url)
+
+    return render_template('chapterss.html')
+
+
+@app.route('/success')
+def success_page():
+    return "File uploaded successfully!"
+
+
+@app.route("/notes", methods=["GET", "POST"])
+def notes():
+    return render_template("notes.html")
+
+@app.route('/question_banks')
+def question_banks():
+    # Your code here
+    return render_template('questionBank.html')
+                           
+@app.route("/semester_papers", methods=["GET", "POST"])
+def semester_papers():
+    return render_template("semPapers.html")
+
+
+@app.route("/mid_papers", methods=["GET", "POST"])
+def mid_papers():
+    return render_template("midPapers.html")
+
+@app.route("/supply_papers", methods=["GET", "POST"])
+def supply_papers():
+    return render_template("supplyPapers.html")
+
+
 @app.route("/")
 def index():
     return render_template("index.html")  # Render the home page template
@@ -173,99 +307,6 @@ def ar_23_three_one():
 def ar_23_three_two():
     return render_template("ar23_three_two.html")  # Render AR23 third-year second-semester page
 
-# File upload route for handling chapter-wise PDFs and images
-@app.route("/upload", methods=["GET", "POST"])
-def upload():
-    if request.method == "POST":  # If the form is submitted
-        regulation = session.get('regulation')  # Get the regulation from the session
-        semester = session.get('semester')  # Get the semester from the session
-        subject = request.form.get("subject")  # Get the subject from the form
-        file = request.files["file"]  # Get the uploaded file from the form
-
-        # Check if a file is selected
-        if file.filename == "":
-            flash("No file selected. Please choose a file to upload.", "danger")  # Show error if no file selected
-            return redirect(request.url)  # Redirect back to the upload page
-        
-        # Check if the file is a valid PDF or image
-        if file and (file.filename.endswith('.pdf') or file.filename.lower().endswith(('.png', '.jpg', '.jpeg'))):
-            filename = file.filename  # Get the filename of the uploaded file
-            file_path = os.path.join(UPLOAD_FOLDER, filename)  # Define the path for saving the file
-            file.save(file_path)  # Save the file to the designated upload folder
-            
-            # Save file data in the database
-            new_upload = Upload(regulation=regulation, semester=semester, subject=subject, filename=filename, file=file.read())  # Read the file content and create a new upload record
-            db.session.add(new_upload)  # Add the upload record to the database
-            db.session.commit()  # Commit the changes
-
-            flash("File uploaded successfully!", "success")  # Show success message
-            return redirect(url_for("upload"))  # Redirect back to the upload page
-        else:
-            flash("Invalid file type. Please upload a PDF or an image (PNG/JPG).", "danger")  # Show error for invalid file types
-
-    return render_template("upload.html")  
-
-
-@app.route("/subjectsInside/<regulation>/<semester>/<subject>", methods=['GET'])
-def subjectsInside(regulation, semester, subject):
-    return render_template('subjectsInsideContent.html', regulation=regulation, semester=semester, subject=subject)
-
-
-@app.route('/chapter_wise', methods=['GET', 'POST'])
-def chapter_wise():
-    if request.method == 'POST':
-        # Handle the file upload
-        regulation = request.form['regulation']
-        semester = request.form['semester']
-        subject = request.form['subject']
-        file = request.files['file']
-
-        # Read the file data
-        file_data = file.read()
-
-        # Create a new upload record with the file data
-        new_upload = Upload(
-            regulation=regulation,
-            semester=semester,
-            subject=subject,
-            filename=file.filename,
-            file=file_data  # Store the file data as BLOB
-        )
-
-        db.session.add(new_upload)
-        db.session.commit()
-        return redirect(url_for('success_page'))  # Redirect to the success page
-
-    # If GET request, render the form (chapterss.html)
-    return render_template('chapterss.html')
-
-
-@app.route('/success')
-def success_page():
-    return "File uploaded successfully!"
-
-
-@app.route("/notes", methods=["GET", "POST"])
-def notes():
-    return render_template("notes.html")
-
-@app.route('/question_banks')
-def question_banks():
-    # Your code here
-    return render_template('questionBank.html')
-                           
-@app.route("/semester_papers", methods=["GET", "POST"])
-def semester_papers():
-    return render_template("semPapers.html")
-
-
-@app.route("/mid_papers", methods=["GET", "POST"])
-def mid_papers():
-    return render_template("midPapers.html")
-
-@app.route("/supply_papers", methods=["GET", "POST"])
-def supply_papers():
-    return render_template("supplyPapers.html")
 
 # Main entry point to start the Flask app
 if __name__ == "__main__":

@@ -1,7 +1,9 @@
+chapters me upload button kane /upload link karna nai kana form me hai naad karliye toh jab hota O naito nai hota 
+
 College Project/
 │
 ├── instance/
-│   └── users.db         # SQLite database file created by Flask
+│   └── users.db # inside this there are two tables 1.user 2.upload         # SQLite database file created by Flask
 │
 ├── templates/           # HTML templates
 │   ├── index.html

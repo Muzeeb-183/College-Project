@@ -121,9 +121,11 @@
             <img src="" alt="Left Image 1">
             <img src="" alt="Left Image 2">
         </div>
+        
 
         <div class="container">
-            <a href="{{ url_for('chapter_wise')}}">chapter_wise</a>
+            <a href="{{ url_for('chapter_wise', regulation=regulation, semester=semester, subject=subject) }}">Upload Chapter-Wise Content</a>
+
             <a href="{{ url_for('notes')}}">Hand-Written Notes</a>
             <a href="{{ url_for('question_banks') }}">Question Banks</a>
             <a href="{{ url_for('semester_papers')}}">Semester Papers</a>
