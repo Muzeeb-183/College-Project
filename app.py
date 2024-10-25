@@ -79,51 +79,47 @@ def after_request(response):
 # Route to handle file uploads and save data to the database
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    regulation = request.form.get('regulation')
-    semester = request.form.get('semester')
-    subject = request.form.get('subject')
-    
-    # Check if these values are None
-    if regulation is None or semester is None or subject is None:
-        print("Regulation, semester, or subject is None")
-    
-    if 'file' not in request.files:
-        return "No file part", 400
+    # Retrieve regulation, semester, and subject from the session
+    regulation = session.get('regulation')
+    semester = session.get('semester')
+    subject = session.get('subject')
 
-    file = request.files['file']
-    if file.filename == '':
-        return "No selected file", 400
+    # Validate required values are not None
+    if not (regulation and semester and subject):
+        flash("Missing session data for regulation, semester, or subject.")
+        return '', 400  # Return a 400 status if there's an issue
 
-    if file:
-        filename = secure_filename(file.filename)
-        uploaded_at = datetime.utcnow()
-        file_data = file.read()
+    # Retrieve the uploaded file
+    file = request.files.get('fileInput')
+    if not file:
+        flash("No file uploaded.")
+        return '', 400  # Return a 400 status if no file is uploaded
 
-        # Save to database
-        new_upload = Upload(
-            regulation=regulation,
-            semester=semester,
-            subject=subject,
-            filename=filename,
-            uploaded_at=uploaded_at,
-            file=file_data  # Adjust based on your storage method
-        )
+    # Save file and other details in the database
+    file_content = file.read()
+    uploaded_at = datetime.now()
 
-        db.session.add(new_upload)
-        db.session.commit()
+    conn = sqlite3.connect('instance/users.db')
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO upload (regulation, semester, subject, filename, uploaded_at, file) VALUES (?, ?, ?, ?, ?, ?) ",
+        (regulation, semester, subject, file.filename, uploaded_at, file_content)
+    )
+    conn.commit()
+    conn.close()
 
-        return redirect(url_for('chapter_wise'))  # Redirect to success or similar
-
-    return "Upload failed", 500
-
-
-
+    return '', 200  # Return a 200 status for successful uploads
 
 
 
 @app.route("/subjectsInside/<regulation>/<semester>/<subject>", methods=['GET'])
 def subjectsInside(regulation, semester, subject):
+    # Store the values in session for later use in upload
+    session['regulation'] = regulation
+    session['semester'] = semester
+    session['subject'] = subject
     return render_template('subjectsInsideContent.html', regulation=regulation, semester=semester, subject=subject)
+
 
 @app.route('/chapter_wise', methods=['GET', 'POST'])
 def chapter_wise():

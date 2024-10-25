@@ -205,114 +205,97 @@
         // Function to extract parameters from the URL
         function getUrlParams() {
             const params = window.location.pathname.split('/');
-            regulation = params[2]; // Assuming regulation is in the second URL segment
-            semester = params[3]; // Assuming semester is in the third URL segment
-            subject = params[4]; // Assuming subject is in the fourth URL segment
+            regulation = params[2];
+            semester = params[3];
+            subject = params[4];
         }
+        document.getElementById("uploadForm").onsubmit = function(event) {
+            event.preventDefault(); // Prevent traditional form submission
+            addTask(); // Call the function to handle file upload
+        };
 
         function addTask() {
+            console.log("Upload button clicked"); // Debugging log
+
             const input = document.getElementById('taskInput');
             const fileInput = document.getElementById('fileInput');
             const taskList = document.getElementById('taskList');
 
             if (input.value.trim() !== '' && fileInput.files.length > 0) {
                 const taskDiv = document.createElement('div');
-                const now = new Date();
-                const timestamp = now.toLocaleString();
                 taskDiv.className = 'task';
 
-                // Initialize the task with HTML
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+
                 taskDiv.innerHTML = `
                     <div>${input.value} <span class="timestamp">(Added on: ${timestamp})</span></div>
                     <div class="taskFile"></div>
-                    <div class="button-group">
-                        <i class="ri-thumb-up-fill icon like-icon" onclick="toggleLike(this)"></i>
-                        <span class="likeCount">0</span>
-                        <i class="ri-thumb-down-line icon dislike-icon" onclick="toggleDislike(this)"></i>
-                        <span class="dislikeCount">0</span>
-                        <i class="ri-chat-3-line icon comment-icon" onclick="toggleCommentInput(this)"></i>
-                        <span class="commentCount">0</span>
-                        <i class="ri-download-line icon download-icon" onclick="downloadFile(this)"></i>
-                        <i class="ri-more-2-line menu-icon" onclick="toggleMenu(this)"></i>
-                        <i class="ri-delete-bin-line delete-icon" onclick="deleteTask(this)"></i>
-                    </div>
-                    <input type="text" class="comment-input" placeholder="Add your comment..." onkeydown="saveComment(event, this)">
-                    <i class="ri-arrow-right-line commit-icon" onclick="commitComment(this)"></i>
-                    <div class="comment-section"></div>
                 `;
 
                 const taskFileDiv = taskDiv.querySelector('.taskFile');
-                const files = Array.from(fileInput.files);
                 const formData = new FormData();
 
-                files.forEach(file => {
-                    const fileReader = new FileReader();
+                Array.from(fileInput.files).forEach(file => {
+                    formData.append('fileInput', file);
 
-                    fileReader.onload = function (e) {
-                        if (file.type.startsWith('image/')) {
-                            const img = document.createElement('img');
-                            img.src = e.target.result;
-                            img.onclick = () => openModal(img.src);
-                            taskFileDiv.appendChild(img);
-                        } else if (file.type === 'application/pdf') {
-                            const link = document.createElement('a');
-                            link.href = e.target.result;
-                            link.textContent = `${file.name} (click to view)`;
-                            link.target = "_blank"; // Opens in a new tab or application
-                            taskFileDiv.appendChild(link);
-                        } else {
-                            const message = document.createElement('div');
-                            message.textContent = `${file.name} uploaded. Click to view.`;
-                            const link = document.createElement('a');
-                            link.href = e.target.result;
-                            link.target = "_blank";
-                            link.textContent = "View";
-                            message.appendChild(link);
-                            taskFileDiv.appendChild(message);
-                        }
-
-                        formData.append('fileInput', file);
-                    };
-
-                    fileReader.readAsDataURL(file);
+                    // Create a visual representation of the uploaded file
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.onclick = () => openModal(img.src); // Assuming openModal is defined elsewhere
+                        taskFileDiv.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(file);
+                        link.textContent = `${file.name} (click to view)`;
+                        link.target = "_blank";
+                        taskFileDiv.appendChild(link);
+                    }
                 });
 
-                // Add metadata to FormData
-                formData.append('regulation', regulation);
-                formData.append('semester', semester);
-                formData.append('subject', subject);
+                // Append dynamic values to formData
+                formData.append('regulation', regulation); // Assuming regulation is set
+                formData.append('semester', semester); // Assuming semester is set
+                formData.append('subject', subject); // Assuming subject is set
                 formData.append('taskTitle', input.value);
 
-                // Send form data to the server for upload
+                // Send the form data via fetch API
                 fetch('/upload', {
                     method: 'POST',
                     body: formData,
                 })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // If the upload is successful, append the taskDiv to taskList
+                    taskList.appendChild(taskDiv);
+                    input.value = ''; // Clear the input field
+                    fileInput.value = ''; // Clear the file input
+                    console.log('Upload successful');
                 })
                 .catch(error => {
                     console.error('Error uploading file:', error);
+                    alert("An error occurred during file upload. Please try again.");
                 });
-
-                taskList.appendChild(taskDiv);
-                input.value = '';
-                fileInput.value = '';
+            } else {
+                alert("Please enter a task and select a file.");
             }
         }
 
-        function openModal(src) {
-            const modal = document.getElementById('myModal');
-            const modalImg = document.getElementById('img01');
-            modal.style.display = "block";
-            modalImg.src = src;
-        }
+function openModal(src) {
+    const modal = document.getElementById('myModal');
+    const modalImg = document.getElementById('img01');
+    modal.style.display = "block";
+    modalImg.src = src;
+}
 
-        function closeModal() {
-            const modal = document.getElementById('myModal');
-            modal.style.display = "none";
-        }
+function closeModal() {
+    const modal = document.getElementById('myModal');
+    modal.style.display = "none";
+}
+
 
         function toggleLike(icon) {
             const likeCount = icon.nextElementSibling;
@@ -391,6 +374,7 @@
         }
 
         function downloadFile(icon) {
+            
             const taskDiv = icon.closest('.task');
             const fileUrl = taskDiv.querySelector('.taskFile a').href; // Assuming the first link is the file
             const link = document.createElement('a');
@@ -401,32 +385,32 @@
             document.body.removeChild(link);
         }
 
+        
+        function submitForm() {
+            document.getElementById('uploadForm').submit(); // Submits the form
+            
+        }
         window.onload = function() {
             getUrlParams();
         }
+
     </script>
 </head>
 <body>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="regulation" value="{{ regulation }}">
-        <input type="hidden" name="semester" value="{{ semester }}">
-        <input type="hidden" name="subject" value="{{ subject }}">
-        <input type="file" name="file" required>
-        <button type="submit">Upload</button>
-    </form>
+    <body>
+        <div class="container">
+            <h1>Chapter Upload</h1>
+            <!-- The form will submit via JavaScript, hence no action attribute needed -->
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="text" id="taskInput" name="taskTitle" placeholder="Enter Task Title" required />
+                <input type="file" id="fileInput" name="fileInput" multiple required />
+                <button type="submit">Upload</button>
+            </form>
+            <div id="taskList"></div> <!-- Where uploaded files will be displayed -->
+        </div>
     
-    
-    <div class="container">
-        <h1>Chapter Upload</h1>
-        <input type="text" id="taskInput" placeholder="Enter Task Title" />
-        <input type="file" id="fileInput" multiple />
-        <button onclick="addTask()">Upload</button>
-        <div id="taskList"></div>
-    </div>
-
-    <div id="myModal" class="modal" onclick="closeModal()">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <img class="modal-content" id="img01">
-    </div>
-</body>
+        <div id="myModal" class="modal" onclick="closeModal()">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
 </html>
