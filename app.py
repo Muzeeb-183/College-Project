@@ -83,17 +83,17 @@ def upload_file():
     regulation = session.get('regulation')
     semester = session.get('semester')
     subject = session.get('subject')
-
+    
     # Validate required values are not None
     if not (regulation and semester and subject):
         flash("Missing session data for regulation, semester, or subject.")
-        return '', 400  # Return a 400 status if there's an issue
+        return '', 400  # Return an empty response with a 400 status code
 
     # Retrieve the uploaded file
     file = request.files.get('fileInput')
     if not file:
         flash("No file uploaded.")
-        return '', 400  # Return a 400 status if no file is uploaded
+        return '', 400  # Return an empty response with a 400 status code
 
     # Save file and other details in the database
     file_content = file.read()
@@ -108,7 +108,11 @@ def upload_file():
     conn.commit()
     conn.close()
 
-    return '', 200  # Return a 200 status for successful uploads
+    # Flash a message indicating success (optional)
+    flash("File uploaded successfully.")
+    return '', 200  # Return an empty response with a 200 status code
+
+
 
 
 

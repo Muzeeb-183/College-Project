@@ -209,80 +209,81 @@
             semester = params[3];
             subject = params[4];
         }
-        document.getElementById("uploadForm").onsubmit = function(event) {
-            event.preventDefault(); // Prevent traditional form submission
-            addTask(); // Call the function to handle file upload
-        };
+    document.getElementById("uploadForm").onsubmit = function(event) {
+    event.preventDefault(); // Prevent the form from submitting traditionally
+    addTask(); // Call the function to handle the upload
+};
 
-        function addTask() {
-            console.log("Upload button clicked"); // Debugging log
+function addTask() {
+    console.log("Upload button clicked"); // Debugging log
 
-            const input = document.getElementById('taskInput');
-            const fileInput = document.getElementById('fileInput');
-            const taskList = document.getElementById('taskList');
+    const input = document.getElementById('taskInput');
+    const fileInput = document.getElementById('fileInput');
+    const taskList = document.getElementById('taskList');
 
-            if (input.value.trim() !== '' && fileInput.files.length > 0) {
-                const taskDiv = document.createElement('div');
-                taskDiv.className = 'task';
+    if (input.value.trim() !== '' && fileInput.files.length > 0) {
+        const taskDiv = document.createElement('div');
+        taskDiv.className = 'task';
 
-                const now = new Date();
-                const timestamp = now.toLocaleString();
+        const now = new Date();
+        const timestamp = now.toLocaleString();
 
-                taskDiv.innerHTML = `
-                    <div>${input.value} <span class="timestamp">(Added on: ${timestamp})</span></div>
-                    <div class="taskFile"></div>
-                `;
+        taskDiv.innerHTML = `
+            <div>${input.value} <span class="timestamp">(Added on: ${timestamp})</span></div>
+            <div class="taskFile"></div>
+        `;
 
-                const taskFileDiv = taskDiv.querySelector('.taskFile');
-                const formData = new FormData();
+        const taskFileDiv = taskDiv.querySelector('.taskFile');
+        const formData = new FormData();
 
-                Array.from(fileInput.files).forEach(file => {
-                    formData.append('fileInput', file);
+        Array.from(fileInput.files).forEach(file => {
+            formData.append('fileInput', file);
 
-                    // Create a visual representation of the uploaded file
-                    if (file.type.startsWith('image/')) {
-                        const img = document.createElement('img');
-                        img.src = URL.createObjectURL(file);
-                        img.onclick = () => openModal(img.src); // Assuming openModal is defined elsewhere
-                        taskFileDiv.appendChild(img);
-                    } else if (file.type === 'application/pdf') {
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(file);
-                        link.textContent = `${file.name} (click to view)`;
-                        link.target = "_blank";
-                        taskFileDiv.appendChild(link);
-                    }
-                });
-
-                // Append dynamic values to formData
-                formData.append('regulation', regulation); // Assuming regulation is set
-                formData.append('semester', semester); // Assuming semester is set
-                formData.append('subject', subject); // Assuming subject is set
-                formData.append('taskTitle', input.value);
-
-                // Send the form data via fetch API
-                fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    // If the upload is successful, append the taskDiv to taskList
-                    taskList.appendChild(taskDiv);
-                    input.value = ''; // Clear the input field
-                    fileInput.value = ''; // Clear the file input
-                    console.log('Upload successful');
-                })
-                .catch(error => {
-                    console.error('Error uploading file:', error);
-                    alert("An error occurred during file upload. Please try again.");
-                });
-            } else {
-                alert("Please enter a task and select a file.");
+            // Create a visual representation of the uploaded file
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.src = URL.createObjectURL(file);
+                img.onclick = () => openModal(img.src); // Assuming openModal is defined elsewhere
+                taskFileDiv.appendChild(img);
+            } else if (file.type === 'application/pdf') {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(file);
+                link.textContent = `${file.name} (click to view)`;
+                link.target = "_blank";
+                taskFileDiv.appendChild(link);
             }
-        }
+        });
+
+        // Append dynamic values to formData
+        formData.append('regulation', regulation);
+        formData.append('semester', semester);
+        formData.append('subject', subject);
+        formData.append('taskTitle', input.value);
+
+        // Send the form data via fetch API
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            // If the upload is successful, append the taskDiv to taskList
+            taskList.appendChild(taskDiv);
+            input.value = ''; // Clear the input field
+            fileInput.value = ''; // Clear the file input
+            console.log('Upload successful');
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+            alert("An error occurred during file upload. Please try again.");
+        });
+    } else {
+        alert("Please enter a task and select a file.");
+    }
+}
+
 
 function openModal(src) {
     const modal = document.getElementById('myModal');
@@ -400,15 +401,14 @@ function closeModal() {
     <body>
         <div class="container">
             <h1>Chapter Upload</h1>
-            <!-- The form will submit via JavaScript, hence no action attribute needed -->
-            <form id="uploadForm" enctype="multipart/form-data">
+            <form id="uploadForm" action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
                 <input type="text" id="taskInput" name="taskTitle" placeholder="Enter Task Title" required />
                 <input type="file" id="fileInput" name="fileInput" multiple required />
                 <button type="submit">Upload</button>
             </form>
-            <div id="taskList"></div> <!-- Where uploaded files will be displayed -->
+            <div id="taskList"></div>
         </div>
-    
+        
         <div id="myModal" class="modal" onclick="closeModal()">
             <span class="close" onclick="closeModal()">&times;</span>
             <img class="modal-content" id="img01">
