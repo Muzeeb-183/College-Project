@@ -83,17 +83,17 @@ def upload_file():
     regulation = session.get('regulation')
     semester = session.get('semester')
     subject = session.get('subject')
-    
+
     # Validate required values are not None
     if not (regulation and semester and subject):
         flash("Missing session data for regulation, semester, or subject.")
-        return '', 400  # Return an empty response with a 400 status code
+        return '', 400  # Return a 400 status if there's an issue
 
     # Retrieve the uploaded file
     file = request.files.get('fileInput')
     if not file:
         flash("No file uploaded.")
-        return '', 400  # Return an empty response with a 400 status code
+        return '', 400  # Return a 400 status if no file is uploaded
 
     # Save file and other details in the database
     file_content = file.read()
@@ -108,13 +108,7 @@ def upload_file():
     conn.commit()
     conn.close()
 
-    # Flash a message indicating success (optional)
-    flash("File uploaded successfully.")
-    return '', 200  # Return an empty response with a 200 status code
-
-
-
-
+    return '', 200  # Return a 200 status for successful uploads
 
 @app.route("/subjectsInside/<regulation>/<semester>/<subject>", methods=['GET'])
 def subjectsInside(regulation, semester, subject):
@@ -133,42 +127,7 @@ def chapter_wise():
         semester = request.form['semester']
         subject = request.form['subject']
 
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        
-        file = request.files['file']
-        
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-
-        if allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-
-            # Save the file data to the database
-            file_data = file.read()
-            with sqlite3.connect('instance/users.db') as conn:
-                cursor = conn.cursor()
-                cursor.execute("""
-                    INSERT INTO upload (regulation, semester, subject, filename, file_data, upload_date)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                """, (regulation, semester, subject, filename, file_data, datetime.now()))
-                conn.commit()
-
-            flash('File successfully uploaded')
-            return redirect(url_for('chapter_wise'))
-
-        flash('File type not allowed')
-        return redirect(request.url)
-
     return render_template('chapterss.html')
-
-
-@app.route('/success')
-def success_page():
-    return "File uploaded successfully!"
-
 
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
