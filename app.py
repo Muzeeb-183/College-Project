@@ -96,7 +96,7 @@ def upload_file():
         return '', 400  # Return a 400 status if no file is uploaded
 
     # Save file and other details in the database
-    file_content = file.read()
+    file_content = file.read()  # Read file content
     uploaded_at = datetime.now()
 
     conn = sqlite3.connect('instance/users.db')
@@ -110,15 +110,26 @@ def upload_file():
 
     return '', 200  # Return a 200 status for successful uploads
 
+
+
+@app.route('/get_files/<regulation>/<semester>/<subject>')
+def get_files(regulation, semester, subject):
+    conn = sqlite3.connect('instance/users.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT filename, uploaded_at FROM upload WHERE regulation=? AND semester=? AND subject=?',
+                   (regulation, semester, subject))
+    files = cursor.fetchall()
+    conn.close()
+    return jsonify(files)
 @app.route("/subjectsInside/<regulation>/<semester>/<subject>", methods=['GET'])
 def subjectsInside(regulation, semester, subject):
-    # Store the values in session for later use in upload
     session['regulation'] = regulation
     session['semester'] = semester
     session['subject'] = subject
     return render_template('subjectsInsideContent.html', regulation=regulation, semester=semester, subject=subject)
 
 
+"""
 @app.route('/chapter_wise', methods=['GET', 'POST'])
 def chapter_wise():
     if request.method == 'POST':
@@ -128,6 +139,16 @@ def chapter_wise():
         subject = request.form['subject']
 
     return render_template('chapterss.html')
+"""
+@app.route('/chapter_wise', methods=['GET', 'POST'])
+def chapter_wise():
+    # Directly retrieve from session or handle request args
+    regulation = session.get('regulation') or request.args.get('regulation')
+    semester = session.get('semester') or request.args.get('semester')
+    subject = session.get('subject') or request.args.get('subject')
+
+    return render_template('chapterss.html')
+
 
 @app.route("/notes", methods=["GET", "POST"])
 def notes():
@@ -152,49 +173,6 @@ def supply_papers():
     return render_template("supplyPapers.html")
 
 
-@app.route("/")
-def index():
-    return render_template("index.html")  # Render the home page template
-
-# Sign-in route that handles login functionality using hashed password verification
-@app.route("/signin", methods=["GET", "POST"])
-def signin():
-    if request.method == "POST":  # If the form is submitted (POST request)
-        email = request.form.get("email")  # Get the user's email from the form
-        password = request.form.get("password")  # Get the user's password from the form
-        user = User.query.filter_by(email=email).first()  # Find the user by email
-        if user and check_password_hash(user.password_hash, password):  # Validate the password against the hash
-            flash("Login successful!", "success")  # Display a success message
-            session['user_id'] = user.id  # Store the user's ID in the session for authentication
-            session['user_email'] = user.email  # Optionally store the email in the session
-            return redirect(url_for("index"))  # Redirect the user to the homepage after successful login
-        else:
-            flash("Invalid credentials. Please try again.", "danger")  # Display an error message for invalid login
-    return render_template("signin.html")  # Render the login page for GET requests or failed login attempts
-
-# Sign-up route that handles user registration with hashed passwords
-@app.route("/signup", methods=["GET", "POST"])
-def signup():
-    if request.method == "POST":  # If the form is submitted (POST request)
-        email = request.form.get("email")  # Get the email from the form
-        password = request.form.get("password")  # Get the password from the form
-        if User.query.filter_by(email=email).first():  # Check if the email is already registered
-            flash("Email already registered. Please use a different email.", "danger")  # Show an error if the email exists
-        else:
-            password_hash = generate_password_hash(password)  # Hash the password before storing
-            new_user = User(email=email, password_hash=password_hash)  # Create a new user with the hashed password
-            db.session.add(new_user)  # Add the new user to the database
-            db.session.commit()  # Commit the changes to save the new user
-            flash("Sign up successful! You can now log in.", "success")  # Display a success message
-            return redirect(url_for("signin"))  # Redirect to the login page after a successful sign-up
-    return render_template("signup.html")  # Render the sign-up page
-
-# Sign-out route that logs the user out
-@app.route("/signout")
-def signout():
-    session.clear()  # Clear the session data (log the user out)
-    flash("You have been logged out.", "success")  # Display a logout confirmation message
-    return redirect(url_for("signin"))  # Redirect the user to the login page
 
 # About page route that renders the about.html template
 @app.route("/about", methods=["GET", "POST"])
@@ -214,8 +192,10 @@ def AR_20_semesters():
 @app.route("/one_one", methods=["GET", "POST"])
 def one_one():
     session['regulation'] = 'AR20'  # Set appropriate regulation
-    session['semester'] = '1-1'     # Set appropriate semester
+    session['semester'] = '1-1'      # Set appropriate semester
+    session['subject'] = 'Default Subject'  # Optionally set a default subject
     return render_template('ar20_one_one.html')
+
 
 @app.route("/one_two", methods=["GET", "POST"])
 def one_two():
@@ -265,6 +245,49 @@ def ar_23_three_one():
 @app.route("/ar_23_three_two", methods=["GET", "POST"])
 def ar_23_three_two():
     return render_template("ar23_three_two.html")  # Render AR23 third-year second-semester page
+@app.route("/")
+def index():
+    return render_template("index.html")  # Render the home page template
+
+# Sign-in route that handles login functionality using hashed password verification
+@app.route("/signin", methods=["GET", "POST"])
+def signin():
+    if request.method == "POST":  # If the form is submitted (POST request)
+        email = request.form.get("email")  # Get the user's email from the form
+        password = request.form.get("password")  # Get the user's password from the form
+        user = User.query.filter_by(email=email).first()  # Find the user by email
+        if user and check_password_hash(user.password_hash, password):  # Validate the password against the hash
+            flash("Login successful!", "success")  # Display a success message
+            session['user_id'] = user.id  # Store the user's ID in the session for authentication
+            session['user_email'] = user.email  # Optionally store the email in the session
+            return redirect(url_for("index"))  # Redirect the user to the homepage after successful login
+        else:
+            flash("Invalid credentials. Please try again.", "danger")  # Display an error message for invalid login
+    return render_template("signin.html")  # Render the login page for GET requests or failed login attempts
+
+# Sign-up route that handles user registration with hashed passwords
+@app.route("/signup", methods=["GET", "POST"])
+def signup():
+    if request.method == "POST":  # If the form is submitted (POST request)
+        email = request.form.get("email")  # Get the email from the form
+        password = request.form.get("password")  # Get the password from the form
+        if User.query.filter_by(email=email).first():  # Check if the email is already registered
+            flash("Email already registered. Please use a different email.", "danger")  # Show an error if the email exists
+        else:
+            password_hash = generate_password_hash(password)  # Hash the password before storing
+            new_user = User(email=email, password_hash=password_hash)  # Create a new user with the hashed password
+            db.session.add(new_user)  # Add the new user to the database
+            db.session.commit()  # Commit the changes to save the new user
+            flash("Sign up successful! You can now log in.", "success")  # Display a success message
+            return redirect(url_for("signin"))  # Redirect to the login page after a successful sign-up
+    return render_template("signup.html")  # Render the sign-up page
+
+# Sign-out route that logs the user out
+@app.route("/signout")
+def signout():
+    session.clear()  # Clear the session data (log the user out)
+    flash("You have been logged out.", "success")  # Display a logout confirmation message
+    return redirect(url_for("signin"))  # Redirect the user to the login page
 
 
 # Main entry point to start the Flask app

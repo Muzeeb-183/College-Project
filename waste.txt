@@ -43,3 +43,375 @@ College Project/
 │
 ├── app.py               # Main Flask application file
 └── requirements.txt      # File listing the dependencies of the project
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        input {
+            width: calc(70% - 20px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #taskList {
+            margin-top: 20px;
+        }
+
+        .task {
+            background: #e9ecef;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-sizing: border-box;
+            overflow: auto;
+            position: relative;
+        }
+
+        .task img {
+            max-width: 100%;
+            max-height: 400px;
+            margin: 10px 0;
+            cursor: pointer;
+        }
+
+        .timestamp {
+            display: inline-block;
+            background-color: #d1ecf1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+
+        .button-group {
+            margin-top: 10px;
+        }
+
+        .icon {
+            font-size: 24px;
+            color: black;
+            cursor: pointer;
+            margin-right: 5px;
+        }
+
+        .liked {
+            color: blue;
+        }
+
+        .disliked {
+            color: blue;
+        }
+
+        .comment-input {
+            display: none;
+            margin-top: 10px;
+            width: 70%;
+            display: inline-block;
+        }
+
+        .commit-icon {
+            cursor: pointer;
+            font-size: 24px;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        .comment-section {
+            margin-top: 10px;
+        }
+
+        .comment {
+            background: #f1f1f1;
+            padding: 5px;
+            margin: 5px 0;
+            border-radius: 4px;
+        }
+
+        .comment-timestamp {
+            display: inline-block;
+            background-color: #d1ecf1;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+            font-size: 12px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-content {
+            display: block;
+            margin: auto;
+            max-width: 80%;
+            max-height: 80%;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .more-comments, .less-comments {
+            cursor: pointer;
+            color: #007bff;
+            margin-top: 10px;
+        }
+
+        .menu-icon {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+        }
+
+        .delete-icon {
+            display: none;
+            color: red;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .menu-open .delete-icon {
+            display: inline;
+        }
+
+        @media (max-width: 600px) {
+            input {
+                width: calc(100% - 20px); /* Full width for smaller screens */
+            }
+
+            .icon {
+                font-size: 20px;
+            }
+
+            .commit-icon {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Chapter</h1>
+        <form id="uploadForm">
+            <input type="text" id="taskInput" placeholder="Task Title" required>
+            <input type="file" id="fileInput" accept=".pdf,image/*" required>
+            <button type="submit">Upload</button>
+        </form>
+        <div id="taskList"></div>
+    </div>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
+    <script>
+        let regulation = '';
+        let semester = '';
+        let subject = '';
+
+        // Function to extract parameters from the URL
+        function getUrlParams() {
+            const params = window.location.pathname.split('/');
+            regulation = params[2];
+            semester = params[3];
+            subject = params[4];
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            getUrlParams();
+
+            // Handle form submission
+            document.getElementById("uploadForm").onsubmit = function(event) {
+                event.preventDefault(); // Prevent the form from submitting traditionally
+                addTask(); // Call the function to handle the upload
+            };
+
+            // Fetch and display uploaded files on page load
+            displayFiles();
+        });
+
+        function addTask() {
+            console.log("Upload button clicked"); // Debugging log
+
+            const input = document.getElementById('taskInput');
+            const fileInput = document.getElementById('fileInput');
+            const taskList = document.getElementById('taskList');
+
+            if (input.value.trim() !== '' && fileInput.files.length > 0) {
+                const taskDiv = document.createElement('div');
+                taskDiv.className = 'task';
+
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+
+                taskDiv.innerHTML = `
+                    <div>${input.value} <span class="timestamp">(Added on: ${timestamp})</span></div>
+                    <div class="taskFile"></div>
+                `;
+
+                const taskFileDiv = taskDiv.querySelector('.taskFile');
+                const formData = new FormData();
+
+                Array.from(fileInput.files).forEach(file => {
+                    formData.append('fileInput', file);
+
+                    // Create a visual representation of the uploaded file
+                    if (file.type.startsWith('image/')) {
+                        const img = document.createElement('img');
+                        img.src = URL.createObjectURL(file);
+                        img.onclick = () => openModal(img.src); // Assuming openModal is defined elsewhere
+                        taskFileDiv.appendChild(img);
+                    } else if (file.type === 'application/pdf') {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(file);
+                        link.textContent = `${file.name} (click to view)`;
+                        link.target = "_blank";
+                        taskFileDiv.appendChild(link);
+                    }
+                });
+
+                // Append dynamic values to formData
+                formData.append('regulation', regulation);
+                formData.append('semester', semester);
+                formData.append('subject', subject);
+                formData.append('taskTitle', input.value);
+
+                // Send the form data via fetch API
+                fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    // If the upload is successful, append the taskDiv to taskList
+                    taskList.appendChild(taskDiv);
+                    input.value = ''; // Clear the input field
+                    fileInput.value = ''; // Clear the file input
+                    console.log('Upload successful');
+                    displayFiles(); // Refresh the file list after upload
+                })
+                .catch(error => {
+                    console.error('Error uploading file:', error);
+                    alert("An error occurred during file upload. Please try again.");
+                });
+            } else {
+                alert("Please enter a task and select a file.");
+            }
+        }
+
+        function openModal(src) {
+            const modal = document.getElementById('myModal');
+            const modalImg = document.getElementById('img01');
+            modal.style.display = "block";
+            modalImg.src = src;
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('myModal');
+            modal.style.display = "none";
+        }
+
+        function displayFiles() {
+            // Fetch the uploaded files for this regulation, semester, and subject
+            fetch(`/files/${regulation}/${semester}/${subject}`)
+                .then(response => response.json())
+                .then(data => {
+                    const taskList = document.getElementById('taskList');
+                    taskList.innerHTML = ''; // Clear existing tasks
+                    data.forEach(file => {
+                        const taskDiv = document.createElement('div');
+                        taskDiv.className = 'task';
+                        const timestamp = new Date(file.uploaded_at).toLocaleString();
+                        taskDiv.innerHTML = `
+                            <div>${file.filename} <span class="timestamp">(Uploaded on: ${timestamp})</span></div>
+                            <div class="taskFile">
+                                <img src="${file.file}" onclick="openModal('${file.file}')" />
+                            </div>
+                        `;
+                        taskList.appendChild(taskDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching files:', error);
+                });
+        }
+    </script>
+</head>
+    <body>
+        <div class="container">
+            <h1>Chapter Upload</h1>
+            <form id="uploadForm" action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="regulation" id="regulation" value="" />
+                <input type="hidden" name="semester" id="semester" value="" />
+                <input type="hidden" name="subject" id="subject" value="" />
+                <input type="text" id="taskInput" name="taskTitle" placeholder="Enter Task Title" required />
+                <input type="file" id="fileInput" name="fileInput" multiple required />
+                <button type="submit">Upload</button>
+            </form>
+            <div id="taskList"></div>
+        </div>
+        
+        <div id="myModal" class="modal" onclick="closeModal()">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img class="modal-content" id="img01">
+        </div>
+    </body>
+</html>
